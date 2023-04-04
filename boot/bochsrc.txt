@@ -1,0 +1,9 @@
+# Enable debugging
+magic_break: enabled=1
+
+# Configure the virtual machine
+megs: 32
+romimage: file=$BXSHARE/BIOS-bochs-latest, address=0xf0000
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
+boot: disk
+floppya: 1_44=boot.bin, status=inserted
