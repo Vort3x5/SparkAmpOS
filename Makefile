@@ -1,11 +1,6 @@
-ASM = fasm
-
-QEMU = qemu-system-x86_64
-QEMU_OPTS = -drive format=raw,file=bin/OS.img
-
 boot.bin:
-	$(ASM) boot/BootSector.asm bin/BootSector.bin
-	$(ASM) boot/Snd.asm bin/Snd.bin
+	fasm boot/BootSector.asm bin/BootSector.bin
+	fasm boot/Snd.asm bin/Snd.bin
 
 clean:
 	rm bin/*
