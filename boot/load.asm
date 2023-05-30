@@ -1,23 +1,13 @@
  ; asmsyntax=fasm
 
 mov sp, 1000h
- 
+
 mov si, next_msg
 mov ah, 0eh
 call print_line
 jmp gdt_start
 
-print_line:
-	lodsb
-	int 10h
-	cmp al, 0
-	jne print_line
-; print new line
-	mov al, 13
-	int 10h
-	mov al, 10
-	int 10h
-	ret
+include 'bios_fns.inc'
 
 next_msg db 'cont!', 0
 
@@ -43,7 +33,7 @@ gdt_start:
 gdt:
 	dw ($ - gdt_start - 1)
 	dd gdt_start
-
+ 
 protected_mode:
 	cli
 	lgdt [gdt]
@@ -65,6 +55,6 @@ jump_kernel:
 	mov ss, ax
 	mov esp, 090000h
 
-	jmp 08h:2000h
+	jmp 08h:5000h
 
 times 2048 - ($ - $$) db 0
