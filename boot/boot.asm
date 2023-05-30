@@ -1,48 +1,39 @@
-; asmsyntax=fasm
+ ; asmsyntax=fasm
+org 7c00h
 
-gdt_start equ 0x800
-setup_gdt:
-	.gdt_null:
-		dw 0
-		dw 0
-	.gdt_code:
-		dw 0xffff
-		dw 0
-		db 0
-		db 0x9a
-		db 0xcf
-		db 0x00
-	.gdt_data:
-		dw 0xffff
-		dw 0
-		db 0
-		db 0x92
-		db 0xcf
-		db 0
+regset:
+	xor ax, ax
+	mov ds, ax
+	mov es, ax
+	mov ss, ax
+	mov sp, 0x7c00
 
-gdt:
-	dw gdt_end - gdt_start - 1
-	dd gdt_start
-		
-gdt_end:
+	call print_startup
+	jmp a20_enable
 
-load_gdt:
-	cli
-	lgdt [gdt]
-	sti
+include 'bios_fns.inc'
+
+print_startup:
+	mov si, start_msg
+	mov ah, 0x0e
+	call print_line
+	ret
 
 a20_enable:
-	jmp check_a20
+	call check_a20
 	cmp ax, 0
-	jne bios_a20
-	jmp check_a20
+	je load_snd
+	call bios_a20
+	call check_a20
 	cmp ax, 0
-	jne kb_a20
-	jmp check_a20
+	je load_snd
+	call kb_a20
+	call check_a20
 	cmp ax, 0
-	jne fast_a20
-	jmp check_a20
-	jmp protected_mode
+	je load_snd
+	call fast_a20
+	call check_a20
+	jmp load_snd
 
 check_a20:
 	pushf
@@ -80,12 +71,12 @@ end_check:
 	pop es
 	pop ds
 	popf
-	jmp a20_enable
+	ret
 
 bios_a20:
 	mov ax, 0x2401
 	int 0x15
-	jmp a20_enable
+	ret
 
 kb_a20:
 	cli
@@ -118,7 +109,7 @@ kb_a20:
 	call a20_wait_command
 
 	sti
-	jmp a20_enable
+	ret
 
 a20_wait_command:
 	in al, 0x64
@@ -136,23 +127,32 @@ fast_a20:
 	in al, 0x92
 	or al, 2
 	out 0x92, al
-	jmp a20_enable
+	ret
 
-protected_mode:
-	mov eax, cr0
-	or eax, 1
-	mov cr0, eax
-	jmp regset
-	nop
-	nop
+load_snd:
+	mov bx, 1000h
+	mov es, bx
+	mov bx, 0h
 
-regset:
-	mov ax, 0x10
+	mov dh, 0h
+	mov dl, 0h
+	mov ch, 0h
+	mov cl, 02h
+
+	mov al, 04h
+
+	call disk_read
+
+	mov ax, 1000h
 	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
-	mov esp, 0x2ffff
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
 
-times 512 - ($ - $$) db 0
+    jmp 1000h:0h
+
+start_msg db 'Initializing!', 0
+
+times 510 - ($ - $$) db 0
+dw 0xaa55

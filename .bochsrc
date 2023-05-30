@@ -1,3 +1,2 @@
 floppya: 1_44=bin/OS.img, status=inserted
 boot: a
-magic_break: enabled=1
