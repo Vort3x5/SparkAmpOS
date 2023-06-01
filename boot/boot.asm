@@ -139,7 +139,7 @@ load_snd:
 	mov ch, 0h
 	mov cl, 02h
 
-	mov al, 04h
+	mov al, 02h ; num of sectors
 
 	call disk_read
 

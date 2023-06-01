@@ -3,7 +3,7 @@ OS.img:
 	fasm boot/load.asm bin/load.bin
 	# cargo rustc -- -C link-arg=-nostartfiles
 	# mv target/debug/SparkAmpOS bin/
-	cat bin/boot.bin bin/load.bin bin/SparkAmpOS > bin/OS.img
+	cat bin/boot.bin bin/load.bin > bin/OS.img
 
 clean:
 	cargo clean
