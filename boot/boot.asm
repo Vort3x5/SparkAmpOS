@@ -1,156 +1,116 @@
  ; asmsyntax=fasm
 org 7c00h
 
-regset:
+Start:
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
 	mov ss, ax
 	mov sp, 0x7c00
 
-	call print_startup
-	jmp a20_enable
+	call PrintStartup
+	jmp A20Enable
 
 include 'bios_fns.inc'
 
-print_startup:
+PrintStartup:
 	mov si, start_msg
 	mov ah, 0x0e
-	call print_line
+	call PrintLine
 	ret
 
-a20_enable:
-	call check_a20
+A20Enable:
+	call CheckA20
 	cmp ax, 0
-	je load_snd
-	call bios_a20
-	call check_a20
+	je LoadKernel
+	call BIOS_A20
+	call CheckA20
 	cmp ax, 0
-	je load_snd
-	call kb_a20
-	call check_a20
+	je LoadKernel
+	call KbA20
+	call CheckA20
 	cmp ax, 0
-	je load_snd
-	call fast_a20
-	call check_a20
-	jmp load_snd
+	je LoadKernel
+	call FastA20
+	call CheckA20
+	jmp LoadKernel
 
-check_a20:
-	pushf
-	push ds
-	push es
-	push di
-	push si
+include 'a20.inc'
 
-	cli
+LoadKernel:
 	xor ax, ax
 	mov es, ax
-	mov di, 0x0500
-	mov ax, 0xffff
-	mov ds, ax
-	mov si, 0x0510
-	mov al, byte [es:di]
-	push ax
-	mov al, byte [ds:si]
-	push ax
-	mov byte [es:di], 0x00
-	mov byte [ds:si], 0xff
-	cmp byte [es:di], 0xff
-	pop ax
-	mov byte [ds:si], al
-	pop ax
-	mov byte [es:di], al
-	
-	mov ax, 0
-	je end_check
-	mov ax, 1
-
-end_check:
-	pop si
-	pop di
-	pop es
-	pop ds
-	popf
-	ret
-
-bios_a20:
-	mov ax, 0x2401
-	int 0x15
-	ret
-
-kb_a20:
-	cli
-
-	call a20_wait_command
-	mov al, 0xad
-	out 0x64, al
-
-	call a20_wait_command
-	mov al, 0xd0
-	out 0x64, al
-
-	call a20_wait_data
-	in al, 0x60
-	push eax
-
-	call a20_wait_command
-	mov al, 0xd1
-	out 0x64, al
-
-	call a20_wait_command
-	pop eax
-	or al, 2
-	out 0x60, al
-
-	call a20_wait_command
-	mov al, 0xae
-	out 0x64, al
-
-	call a20_wait_command
-
-	sti
-	ret
-
-a20_wait_command:
-	in al, 0x64
-	test al, 2
-	jnz a20_wait_command
-	ret
-
-a20_wait_data:
-	in al, 0x64
-	test al, 1
-	jz a20_wait_data
-	ret
-
-fast_a20:
-	in al, 0x92
-	or al, 2
-	out 0x92, al
-	ret
-
-load_snd:
 	mov bx, 1000h
-	mov es, bx
-	mov bx, 0h
+
+	; how many sectors to read
+	mov ax, 10
+	push ax
 
 	mov dh, 0h
 	mov dl, 0h
+	
 	mov ch, 0h
 	mov cl, 02h
 
-	mov al, 02h ; num of sectors
+	.read:
 
-	call disk_read
+		mov al, 01h
+		mov ah, 02h
+		inc cl
 
-	mov ax, 1000h
+		int 13h
+		add bx, 200h
+		pop ax
+		dec ax
+		push ax
+		jnz .read
+
+GDT:
+	dw (GDT_End - GDT_Start - 1)
+	dd GDT_Start
+ 
+ProtectedMode:
+	cli
+	lgdt [GDT]
+	
+	mov eax, cr0
+	or eax, 1
+	mov cr0, eax
+
+	jmp 08h:JumpKernel
+
+use32
+JumpKernel:
+	mov ax, 10h
 	mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
+	mov fs, ax
 
-    jmp 1000h:0h
+	mov gs, ax
+	mov es, ax
+	mov ss, ax
+	mov esp, 09000h
+	mov ebp, esp
+
+	jmp 08h:1000h
+
+GDT_Start:
+; null
+	dq 0h
+; code
+	dw 0ffffh
+	dw 0h
+	db 0h
+	db 10011010b
+	db 11001111b
+	db 0
+; data
+	dw 0ffffh
+	dw 0h
+	db 0h
+	db 10010010b
+	db 11001111b
+	db 0
+GDT_End:
 
 start_msg db 'Initializing!', 0
 
