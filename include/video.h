@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdtypes.h>
+#include "stdtypes.h"
 
 #define VGA_ADDR 0xb8000
 
@@ -10,7 +10,7 @@
 #define VGA_CTRL_REG 0x3d4
 #define VGA_DATA_REG 0x3d5
 
-typedef enum 
+enum Colors
 {
 	BLACK = 0,
 	BLUE,
@@ -28,6 +28,6 @@ typedef enum
 	LIGHT_MAGENTA,
 	YELLOW,
 	WHITE
-} Colors;
+};
 
 void Clear();

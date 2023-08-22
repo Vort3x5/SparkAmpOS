@@ -1,56 +1,44 @@
-ASM := fasm
+CC := i686-elf-gcc
+CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -I include/
 
-CC := gcc
-CFLAGS := -ffreestanding -I include/
+C_SRCS := $(wildcard drivers/*.c src/*.c)
+S_SRCS := $(wildcard src/*.S)
 
-LD := ld
-
-BOOTDIR := boot
-SRCDIR := src
-DRIVERSDIR := drivers
-
-OBJDIR := obj
-BINDIR := bin
-ISODIR := iso
-
-C_SRCS := $(wildcard $(DRIVERSDIR)/*.c $(SRCDIR)/*.c)
-OBJ := ${C_SRCS:.c=.o}
+C_OBJS := $(patsubst %.c, obj/%.o, $(notdir $(C_SRCS)))
+S_OBJS := $(patsubst %.S, obj/%.o, $(notdir $(S_SRCS)))
 
 all: iso kernel_info
 
-bootloader:
-	$(ASM) $(BOOTDIR)/boot.asm $(BINDIR)/boot.bin
+SparkAmpOS: $(S_OBJS) $(C_OBJS)
+	$(CC) $(CFLAGS) -e _main -T scripts/link.ld -o $@ $^
 
-%.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
-	mv $@ obj/
+obj/%.o: drivers/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-SparkAmpOS: $(OBJ)
-	$(CC) $(CFLAGS) -c src/main.c -o obj/SparkAmpOS.o 
-	$(LD) -i -e _main -Ttext 0x1000 obj/SparkAmpOS.o -o obj/SparkAmpOS_temp.o
-	mv obj/SparkAmpOS_temp.o obj/SparkAmpOS.o
-	objcopy -R .note -R .comment -S -O binary obj/SparkAmpOS.o bin/SparkAmpOS
+obj/%.o: src/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-iso: bootloader SparkAmpOS
-	dd if=/dev/zero of=iso/boot.iso bs=512 count=2880
-	dd if=./bin/boot.bin of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
-	dd if=./bin/SparkAmpOS of=iso/boot.iso conv=notrunc bs=512 seek=1 count=2048
+obj/%.o: src/%.S
+	$(CC) $(CFLAGS) -c -o $@ $< -D__is_kernel
+
+dirs:
+	mkdir -p iso/boot/grub
+	mkdir -p obj/
+
+iso: dirs SparkAmpOS
+	grub-file --is-x86-multiboot SparkAmpOS
+	cp SparkAmpOS iso/boot/SparkAmpOS
+	./scripts/grub.sh
+	grub-mkrescue -o SparkAmpOS iso
 
 kernel_info:
 	lua scripts/file_size.lua
 
-# rust:
-# cargo rustc -- -C link-arg=-nostartfiles
-# mv target/debug/SparkAmpOS bin/
-
 clean:
-	cargo clean
-	rm bin/*
-	rm iso/boot.iso
-	rm obj/*
+	rm -rf SparkAmpOS iso/ obj/
 
 release:
-	qemu-system-i386 -drive format=raw,file=iso/boot.iso
+	qemu-system-i386 -cdrom SparkAmpOS
 
 debug:
 	bochs -f .bochsrc
