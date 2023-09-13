@@ -10,9 +10,10 @@ void _main()
 	tty->addr = 0;
 
 	Clear(tty);
-
 	Print(tty, "Start\nEnd", WHITE);
+
 	Beep();
+
 	Clear(tty);
 	Print(tty, "Finished", WHITE);
 }
