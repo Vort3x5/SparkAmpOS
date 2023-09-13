@@ -1,3 +1,5 @@
+ASM := fasm
+
 CC := i686-elf-gcc
 CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -I include/
 
@@ -7,7 +9,27 @@ S_SRCS := $(wildcard src/*.S)
 C_OBJS := $(patsubst %.c, obj/%.o, $(notdir $(C_SRCS)))
 S_OBJS := $(patsubst %.S, obj/%.o, $(notdir $(S_SRCS)))
 
-all: iso kernel_info
+all: dirs SparkAmpOS.bin kernel_info Boot
+	dd if=/dev/zero of=iso/boot.iso bs=512 count=2880
+	dd if=./Boot of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
+	dd if=./SparkAmpOS.bin of=iso/boot.iso conv=notrunc bs=512 seek=1 count=2048
+
+GRUB: dirs SparkAmpOS
+	mkdir -p iso/boot/grub
+	grub-file --is-x86-multiboot SparkAmpOS
+	cp SparkAmpOS iso/boot/SparkAmpOS
+	./scripts/grub.sh
+	grub-mkrescue -o SparkAmpOS iso
+	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -cdrom SparkAmpOS
+
+Boot:
+	$(ASM) boot/boot.asm $@
+
+kernel_info:
+	lua scripts/kernel_size.lua
+
+SparkAmpOS.bin: $(C_OBJS)
+	$(CC) $(CFLAGS) -e _main -Ttext 0x1000 -o $@ $^
 
 SparkAmpOS: $(S_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -e _main -T scripts/link.ld -o $@ $^
@@ -22,23 +44,16 @@ obj/%.o: src/%.S
 	$(CC) $(CFLAGS) -c -o $@ $< -D__is_kernel
 
 dirs:
-	mkdir -p iso/boot/grub
 	mkdir -p obj/
-
-iso: dirs SparkAmpOS
-	grub-file --is-x86-multiboot SparkAmpOS
-	cp SparkAmpOS iso/boot/SparkAmpOS
-	./scripts/grub.sh
-	grub-mkrescue -o SparkAmpOS iso
-
-kernel_info:
-	lua scripts/file_size.lua
+	mkdir -p iso/
 
 clean:
-	rm -rf SparkAmpOS iso/ obj/
+	rm -rf SparkAmpOS SparkAmpOS.bin iso/ obj/ Boot
 
 release:
 	qemu-system-i386 -cdrom SparkAmpOS
 
 debug:
 	bochs -f .bochsrc
+
+.PHONY: GRUB clean release debug

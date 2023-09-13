@@ -3,14 +3,28 @@
 #include <stdtypes.h>
 #include <io.h>
 
-void Clear()
+void Clear(TTY *tty)
 {
-	byte *vga = (byte *) VGA_ADDR;
 	s32 area = TEXT_MODE_COLS * TEXT_MODE_ROWS;
 
-	for (s32 bt = 0; bt < area; ++bt)
+	for (s32 i = 0; i < area; ++i)
+		tty->vga_text_buffer[i] = VgaEntry(0, WHITE);
+	tty->addr = 0;
+}
+
+void PutC(TTY *tty, byte c, enum Colors color)
+{
+	if (c == '\n')
+		tty->addr += 80 - ((tty->addr) % 80);
+	else
 	{
-		*(vga++) = 0;
-		*(vga++) = WHITE;
+		tty->vga_text_buffer[tty->addr] = VgaEntry(c, color);
+		++(tty->addr);
 	}
+}
+
+void Print(TTY *tty, const char *msg, enum Colors color)
+{
+	for (s32 i = 0; msg[i]; ++i)
+		PutC(tty, msg[i], color);
 }

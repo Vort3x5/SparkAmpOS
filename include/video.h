@@ -30,4 +30,14 @@ enum Colors
 	WHITE
 };
 
-void Clear();
+typedef struct {
+	word *vga_text_buffer;
+	u32 addr;
+} TTY;
+
+inline word VgaEntry(byte c, enum Colors color)
+	{ return (word) c | (word) color << 8; }
+
+void Clear(TTY *tty);
+void PutC(TTY *tty, byte c, enum Colors color);
+void Print(TTY *tty, const char *msg, enum Colors color);
