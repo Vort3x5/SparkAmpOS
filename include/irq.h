@@ -18,7 +18,8 @@ struct IDT_Ptr
 	dword base;
 } __attribute__((packed));
 
-void IDTLoad();
+extern void _IDTLoad();
+
 void IDTSetGate(byte index, dword base, word sel, byte flags);
 void IDTInstall();
 

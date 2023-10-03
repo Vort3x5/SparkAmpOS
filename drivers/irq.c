@@ -7,13 +7,6 @@
 struct IDT_Entry idt[256];
 struct IDT_Ptr idtp;
 
-void IDTLoad()
-{
-	asm volatile (
-		"lidt [idtp];"
-	);
-}
-
 void IDTSetGate(byte index, dword base, word sel, byte flags)
 {
 	idt[index] = (struct IDT_Entry) {
@@ -32,7 +25,7 @@ void IDTInstall()
 
 	Memset(&idt, 0, sizeof (struct IDT_Entry) * 256);
 
-	IDTLoad();
+	_IDTLoad();
 }
 
 void ISRsInstall()
