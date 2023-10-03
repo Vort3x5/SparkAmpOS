@@ -4,7 +4,7 @@ format ELF
 
 ALN			equ 1<<0 ; ALIGN is a keyword in fasm
 MEMINFO		equ 1<<1
-FLAGS 		equ 1 or 2
+FLAGS 		equ 1 or 2 ; 1<<0 | 1<<1
 MAGIC 		equ 0x1badb002
 CHECKSUM 	equ -(MAGIC + FLAGS)
 
@@ -19,7 +19,7 @@ section '.bss' align 16
 stack_bottom dd 0
 stack_top equ stack_bottom + 16384
 
-section 'text'
+section '.text'
 
 extrn Main
 public _start
@@ -31,4 +31,3 @@ _start:
 	cli
 
 	hlt
-	jmp	1000:000

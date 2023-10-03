@@ -16,7 +16,7 @@ void Main()
 	IDTInstall();
 	ISRsInstall();
 
-	s32 x = 5 / 0;
+	// s32 x = 5 / 0;
 
 	Clear(tty);
 	Print(tty, "Finished", WHITE);

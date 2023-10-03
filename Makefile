@@ -5,16 +5,18 @@ CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -I include/
 
 C_SRCS := $(wildcard drivers/*.c src/*.c)
 S_SRCS := $(wildcard src/*.S)
+ASM_SRCS := $(wildcard src/*.asm)
 
 C_OBJS := $(patsubst %.c, obj/%.o, $(notdir $(C_SRCS)))
 S_OBJS := $(patsubst %.S, obj/%.o, $(notdir $(S_SRCS)))
+ASM_OBJS := $(patsubst %.asm, obj/%.o, $(notdir $(ASM_SRCS)))
 
-all: dirs SparkAmpOS.bin kernel_info Boot
+all: dirs Entry SparkAmpOS.bin kernel_info Boot
 	dd if=/dev/zero of=iso/boot.iso bs=512 count=2880
 	dd if=./Boot of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
 	dd if=./SparkAmpOS.bin of=iso/boot.iso conv=notrunc bs=512 seek=1 count=2048
 
-GRUB: dirs SparkAmpOS
+GRUB: dirs Entry SparkAmpOS
 	mkdir -p iso/boot/grub
 	grub-file --is-x86-multiboot SparkAmpOS
 	cp SparkAmpOS iso/boot/SparkAmpOS
@@ -28,10 +30,10 @@ Boot:
 kernel_info:
 	lua scripts/kernel_size.lua
 
-SparkAmpOS.bin: $(C_OBJS)
+SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -e Main -Ttext 0x1000 -o $@ $^
 
-SparkAmpOS: $(S_OBJS) $(C_OBJS)
+SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -e Main -T scripts/link.ld -o $@ $^
 
 obj/%.o: drivers/%.c
@@ -40,8 +42,11 @@ obj/%.o: drivers/%.c
 obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-obj/%.o: src/%.S
-	$(CC) $(CFLAGS) -c -o $@ $< -D__is_kernel
+# obj/%.o: src/%.S
+	# $(CC) $(CFLAGS) -c -o $@ $< -D__is_kernel
+
+Entry:
+	$(ASM) src/entry.asm obj/entry.o
 
 dirs:
 	mkdir -p obj/
