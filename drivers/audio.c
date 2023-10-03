@@ -28,11 +28,6 @@ void NoSound()
 void Beep()
 {
 	PlaySound(1000);
-	u64 x = 0;
-	for (u64 i = 0; i < 9000000000; ++i)
-	{
-		x += 2;
-		x -= 2;
-	}
+	// Sleep(2000);
 	NoSound();
 }

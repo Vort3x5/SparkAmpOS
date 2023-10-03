@@ -28,7 +28,7 @@ _start:
 
 
 	# Transfer control to the main kernel.
-	call _main
+	call Main
 
 	# Hang if kernel_main unexpectedly returns.
 	cli

@@ -14,12 +14,15 @@ void Clear(TTY *tty)
 
 void PutC(TTY *tty, byte c, enum Colors color)
 {
-	if (c == '\n')
-		tty->addr += 80 - ((tty->addr) % 80);
-	else
+	switch(c)
 	{
-		tty->vga_text_buffer[tty->addr] = VgaEntry(c, color);
-		++(tty->addr);
+		case '\n':
+			tty->addr += TEXT_MODE_COLS - ((tty->addr) % TEXT_MODE_COLS);
+			break;
+
+		default:
+			tty->vga_text_buffer[tty->addr] = VgaEntry(c, color);
+			++(tty->addr);
 	}
 }
 

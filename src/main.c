@@ -1,18 +1,22 @@
 #include <stdtypes.h>
 #include <video.h>
 #include <audio.h>
+#include <irq.h>
 
-void _main() 
+void Main() 
 {
-	TTY *tty;
-
-	tty->vga_text_buffer = (word *) VGA_ADDR;
-	tty->addr = 0;
+	TTY *tty = &(TTY) {
+		.vga_text_buffer = (word *) VGA_ADDR, 
+		.addr = 0
+	};
 
 	Clear(tty);
 	Print(tty, "Start\nEnd", WHITE);
 
-	Beep();
+	IDTInstall();
+	ISRsInstall();
+
+	s32 x = 5 / 0;
 
 	Clear(tty);
 	Print(tty, "Finished", WHITE);

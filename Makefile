@@ -29,10 +29,10 @@ kernel_info:
 	lua scripts/kernel_size.lua
 
 SparkAmpOS.bin: $(C_OBJS)
-	$(CC) $(CFLAGS) -e _main -Ttext 0x1000 -o $@ $^
+	$(CC) $(CFLAGS) -e Main -Ttext 0x1000 -o $@ $^
 
 SparkAmpOS: $(S_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -e _main -T scripts/link.ld -o $@ $^
+	$(CC) $(CFLAGS) -e Main -T scripts/link.ld -o $@ $^
 
 obj/%.o: drivers/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<

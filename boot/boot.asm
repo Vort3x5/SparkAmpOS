@@ -1,7 +1,7 @@
 ; asmsyntax=fasm
 org 7c00h
 
-KERNEL_SIZE equ 21
+KERNEL_SIZE equ 35
 
 Start:
 	xor ax, ax
