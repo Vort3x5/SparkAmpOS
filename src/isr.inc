@@ -1,130 +1,84 @@
 ; asmsyntax=fasm
 
-public ISR_0
-public ISR_1 
-public ISR_2 
-public ISR_3 
-public ISR_4 
-public ISR_5 
-public ISR_6 
-public ISR_7 
-public ISR_8 
-public ISR_9 
-public ISR_10 
-public ISR_11 
-public ISR_12 
-public ISR_13 
-public ISR_14 
-public ISR_15 
-public ISR_16 
-public ISR_17 
-public ISR_18 
-public ISR_19 
-public ISR_20 
-public ISR_21 
-public ISR_22 
-public ISR_23 
-public ISR_24 
-public ISR_25 
-public ISR_26 
-public ISR_27 
-public ISR_28 
-public ISR_29 
-public ISR_30 
-public ISR_31
+macro ISR num
+{
+	public ISR_#num
+	ISR_#num:
+		cli
+		push num
+		jmp ISRCommonStub
+}
 
-ISR_0:
-	jmp ISRCommonStub
+macro ISRErr num
+{
+	public ISR_#num
+	ISR_#num:
+		cli
+		push 0
+		push num
+		jmp ISRCommonStub
+}
 
-ISR_1:
-	jmp ISRCommonStub
+ISRErr 0
 
-ISR_2:
-	jmp ISRCommonStub
+ISR 1
 
-ISR_3:
-	jmp ISRCommonStub
+ISR 2
 
-ISR_4:
-	jmp ISRCommonStub
+ISR 3
 
-ISR_5:
-	jmp ISRCommonStub
+ISR 4
 
-ISR_6:
-	jmp ISRCommonStub
+ISR 5
 
-ISR_7:
-	jmp ISRCommonStub
+ISR 6
 
-ISR_8:
-	jmp ISRCommonStub
+ISR 7
 
-ISR_9:
-	jmp ISRCommonStub
+ISR 8
 
-ISR_10:
-	jmp ISRCommonStub
+ISR 9
 
-ISR_11:
-	jmp ISRCommonStub
+ISR 10
 
-ISR_12:
-	jmp ISRCommonStub
+ISR 11
 
-ISR_13:
-	jmp ISRCommonStub
+ISR 12
 
-ISR_14:
-	jmp ISRCommonStub
+ISR 13
 
-ISR_15:
-	jmp ISRCommonStub
+ISR 14
 
-ISR_16:
-	jmp ISRCommonStub
+ISR 15
 
-ISR_17:
-	jmp ISRCommonStub
+ISR 16
 
-ISR_18:
-	jmp ISRCommonStub
+ISR 17
 
-ISR_19:
-	jmp ISRCommonStub
+ISR 18
 
-ISR_20:
-	jmp ISRCommonStub
+ISR 19
 
-ISR_21:
-	jmp ISRCommonStub
+ISR 20
 
-ISR_22:
-	jmp ISRCommonStub
+ISR 21
 
-ISR_23:
-	jmp ISRCommonStub
+ISR 22
 
-ISR_24:
-	jmp ISRCommonStub
+ISR 23
 
-ISR_25:
-	jmp ISRCommonStub
+ISR 24
 
-ISR_26:
-	jmp ISRCommonStub
+ISR 25
 
-ISR_27:
-	jmp ISRCommonStub
+ISR 26
 
-ISR_28:
-	jmp ISRCommonStub
+ISR 27
 
-ISR_29:
-	jmp ISRCommonStub
+ISR 28
 
-ISR_30:
-	jmp ISRCommonStub
+ISR 29
 
-ISR_31:
-	jmp ISRCommonStub
+ISR 30
+
+ISR 31
