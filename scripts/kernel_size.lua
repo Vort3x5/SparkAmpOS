@@ -1,4 +1,4 @@
-local filename = "SparkAmpOS.bin"
+local filename = "bin/SparkAmpOS.bin"
 
 -- Open The File In Binary Mode
 local file = io.open(filename, "rb")

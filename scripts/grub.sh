@@ -1,5 +1,5 @@
 cat > iso/boot/grub/grub.cfg << EOF
-menuentry "SparkAmpOS" {
-	multiboot /boot/SparkAmpOS
+menuentry "boot.iso" {
+	multiboot /boot/boot.iso
 }
 EOF

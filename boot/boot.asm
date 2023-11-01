@@ -1,7 +1,8 @@
 ; asmsyntax=fasm
 org 7c00h
 
-KERNEL_SIZE equ 41
+; SND_SIZE equ 4
+KERNEL_SIZE equ 60
 
 Start:
 	xor ax, ax
@@ -13,7 +14,7 @@ Start:
 	call PrintStartup
 	jmp A20Enable
 
-include 'bios_fns.inc'
+include 'print.inc'
 
 PrintStartup:
 	mov si, start_msg
@@ -22,16 +23,16 @@ PrintStartup:
 	ret
 
 A20Enable:
-	call CheckA20
-	cmp ax, 0
+	call CheckA20 ; returns 0 if a20 is disabled and 1 if enabled
+	cmp ax, 1
 	je LoadKernel
 	call BIOS_A20
 	call CheckA20
-	cmp ax, 0
+	cmp ax, 1
 	je LoadKernel
 	call KbA20
 	call CheckA20
-	cmp ax, 0
+	cmp ax, 1
 	je LoadKernel
 	call FastA20
 	call CheckA20
@@ -39,33 +40,14 @@ A20Enable:
 
 include 'a20.inc'
 
+include 'read_disk.inc'
+
 LoadKernel:
 	xor ax, ax
 	mov es, ax
 	mov bx, 1000h
 
-	; how many sectors to read
-	mov ax, KERNEL_SIZE
-	push ax
-
-	mov dh, 0h
-	mov dl, 0h
-	
-	mov ch, 0h
-	mov cl, 02h
-
-	.read:
-
-		mov al, 01h
-		mov ah, 02h
-		inc cl
-
-		int 13h
-		add bx, 200h
-		pop ax
-		dec ax
-		push ax
-		jnz .read
+	LoadSectors KERNEL_SIZE, 1 ; 1 + second_stage size in sectors
 
 GDT:
 	dw (GDT_End - GDT_Start - 1)
@@ -95,24 +77,7 @@ JumpKernel:
 
 	jmp 08h:1000h
 
-GDT_Start:
-; null
-	dq 0h
-; code
-	dw 0ffffh
-	dw 0h
-	db 0h
-	db 10011010b
-	db 11001111b
-	db 0
-; data
-	dw 0ffffh
-	dw 0h
-	db 0h
-	db 10010010b
-	db 11001111b
-	db 0
-GDT_End:
+include 'gdt.inc'
 
 start_msg db 'Initializing!', 0
 

@@ -39,28 +39,4 @@ _IDTLoad:
 
 include 'isr.inc'
 
-extrn FaultHandler
-
-ISRCommonStub:
-	pusha
-	push ds
-	push es
-	push fs
-	push gs
-	mov ax, 10h
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov eax, esp
-	push eax
-	mov eax, FaultHandler
-	call eax
-	pop eax
-	pop gs
-	pop fs
-	pop es
-	pop ds
-	popa
-	add esp, 8
-	iret
+include 'irq.inc'

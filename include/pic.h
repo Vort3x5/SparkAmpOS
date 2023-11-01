@@ -65,4 +65,28 @@ extern void ISR_30(struct Regs *);
 extern void ISR_31(struct Regs *);
 
 void ISRsInstall();
-void FaultHandler(struct Regs *reg, TTY *tty);
+void FHInitTTY(TTY *tty);
+void FaultHandler(struct Regs *reg);
+
+extern void IRQ_0();
+extern void IRQ_1();
+extern void IRQ_2();
+extern void IRQ_3();
+extern void IRQ_4();
+extern void IRQ_5();
+extern void IRQ_6();
+extern void IRQ_7();
+extern void IRQ_8();
+extern void IRQ_9();
+extern void IRQ_10();
+extern void IRQ_11();
+extern void IRQ_12();
+extern void IRQ_13();
+extern void IRQ_14();
+extern void IRQ_15();
+ 
+void InstallIRQHandler(s32 irq, void (*handler)(struct Regs *r));
+void UninstallIRQHandler(s32 irq);
+void RemapIRQ(void);
+void InstallIRQ();
+void HandleIRQ(struct Regs *r);

@@ -1,25 +1,27 @@
 ; asmsyntax=fasm
 org 7c00h
 
-KERNEL_SIZE equ 10
+KERNEL_SIZE equ 41
 
 Start:
 	xor ax, ax
 	mov ds, ax
 	mov es, ax
 	mov ss, ax
-	mov sp, 0x7c00
+	mov sp, 7c00h
 
 	call PrintStartup
 	jmp A20Enable
 
-include 'bios_fns.inc'
+include 'print.inc'
 
 PrintStartup:
 	mov si, start_msg
-	mov ah, 0x0e
+	mov ah, 0eh
 	call PrintLine
 	ret
+
+include 'a20.inc'
 
 A20Enable:
 	call CheckA20
@@ -36,8 +38,6 @@ A20Enable:
 	call FastA20
 	call CheckA20
 	jmp LoadKernel
-
-include 'a20.inc'
 
 LoadKernel:
 	xor ax, ax
@@ -95,24 +95,7 @@ JumpKernel:
 
 	jmp 08h:1000h
 
-GDT_Start:
-; null
-	dq 0h
-; code
-	dw 0ffffh
-	dw 0h
-	db 0h
-	db 10011010b
-	db 11001111b
-	db 0
-; data
-	dw 0ffffh
-	dw 0h
-	db 0h
-	db 10010010b
-	db 11001111b
-	db 0
-GDT_End:
+include 'gdt.inc'
 
 start_msg db 'Initializing!', 0
 

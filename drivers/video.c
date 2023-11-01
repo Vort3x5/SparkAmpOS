@@ -12,7 +12,7 @@ void Clear(TTY *tty)
 	tty->addr = 0;
 }
 
-void PutC(TTY *tty, byte c, enum Colors color)
+void PutC(TTY *tty, char c, enum Colors color)
 {
 	switch(c)
 	{

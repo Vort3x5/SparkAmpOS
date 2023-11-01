@@ -38,6 +38,8 @@ typedef struct {
 inline word VgaEntry(byte c, enum Colors color)
 	{ return (word) c | (word) color << 8; }
 
+void TTYInit();
+
 void Clear(TTY *tty);
-void PutC(TTY *tty, byte c, enum Colors color);
+void PutC(TTY *tty, char c, enum Colors color);
 void Print(TTY *tty, const char *msg, enum Colors color);
