@@ -19,6 +19,7 @@ all: dirs Entry SparkAmpOS.bin kernel_info $(BOOT_BINS)
 	dd if=./bin/boot.bin of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
 	dd if=./bin/load.bin of=iso/boot.iso conv=notrunc bs=512 seek=1 count=4
 	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso conv=notrunc bs=512 seek=5 count=2048
+	# cat bin/boot.bin bin/load.bin bin/SparkAmpOS.bin > iso/boot.iso - not loading second stage
 
 GRUB: dirs Entry SparkAmpOS
 	mkdir -p iso/boot/grub
