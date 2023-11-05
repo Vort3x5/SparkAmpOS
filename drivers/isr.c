@@ -101,23 +101,12 @@ char *exceptions[] =
     "RESERVED"
 };
 
-void FHInitTTY(TTY *tty)
-{
-	vga_text_buffer = tty->vga_text_buffer;
-	addr = tty->addr;
-}
-
 void FaultHandler(struct Regs *reg)
 {
-	TTY *tty = &(TTY) {
-		.vga_text_buffer = vga_text_buffer,
-		.addr = addr
-	};
-
 	if (reg->int_no < 32)
 	{
-		Print(tty, exceptions[reg->int_no], RED);
-		Print(tty, " Exception. System Halted!\n", RED);
+		Print(exceptions[reg->int_no], RED);
+		Print(" Exception. System Halted!\n", RED);
 		for(;;);
 	}
 }

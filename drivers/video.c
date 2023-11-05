@@ -1,9 +1,10 @@
 #include <video.h>
 
 #include <stdtypes.h>
-#include <io.h>
 
-void Clear(TTY *tty)
+TTY *tty;
+
+void Clear()
 {
 	s32 area = TEXT_MODE_COLS * TEXT_MODE_ROWS;
 
@@ -12,7 +13,7 @@ void Clear(TTY *tty)
 	tty->addr = 0;
 }
 
-void PutC(TTY *tty, char c, enum Colors color)
+void PutC(char c, enum Colors color)
 {
 	switch(c)
 	{
@@ -26,8 +27,8 @@ void PutC(TTY *tty, char c, enum Colors color)
 	}
 }
 
-void Print(TTY *tty, const char *msg, enum Colors color)
+void Print(const char *msg, enum Colors color)
 {
 	for (s32 i = 0; msg[i]; ++i)
-		PutC(tty, msg[i], color);
+		PutC(msg[i], color);
 }

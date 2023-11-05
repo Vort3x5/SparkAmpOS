@@ -1,6 +1,6 @@
 ; asmsyntax=fasm
 
-macro ISR num
+macro ISRErr num
 {
 	public ISR_#num
 	ISR_#num:
@@ -9,7 +9,7 @@ macro ISR num
 		jmp ISRCommonStub
 }
 
-macro ISRErr num
+macro ISR num
 {
 	public ISR_#num
 	ISR_#num:
@@ -19,7 +19,7 @@ macro ISRErr num
 		jmp ISRCommonStub
 }
 
-ISRErr 0
+ISR 0
 
 ISR 1
 
@@ -35,19 +35,19 @@ ISR 6
 
 ISR 7
 
-ISR 8
+ISRErr 8
 
 ISR 9
 
-ISR 10
+ISRErr 10
 
-ISR 11
+ISRErr 11
 
-ISR 12
+ISRErr 12
 
-ISR 13
+ISRErr 13
 
-ISR 14
+ISRErr 14
 
 ISR 15
 

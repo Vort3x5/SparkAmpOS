@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdtypes.h>
-#include <video.h>
 
 struct IDT_Entry
 {
@@ -65,7 +64,6 @@ extern void ISR_30(struct Regs *);
 extern void ISR_31(struct Regs *);
 
 void ISRsInstall();
-void FHInitTTY(TTY *tty);
 void FaultHandler(struct Regs *reg);
 
 extern void IRQ_0();

@@ -1,6 +1,6 @@
 ; asmsyntax=fasm
 
-CheckA20:
+CheckA20: ; returns 0 if a20 is disabled and 1 if enabled
 	pushf
 	push ds
 	push es

@@ -1,83 +1,62 @@
 ; asmsyntax=fasm
+
+format binary
+
+use16
 org 7c00h
 
-; SND_SIZE equ 4
-KERNEL_SIZE equ 60
+jmp Start
 
-Start:
-	xor ax, ax
-	mov ds, ax
-	mov es, ax
-	mov ss, ax
-	mov sp, 7c00h
+include 'OEMpb.inc'
 
-	call PrintStartup
-	jmp A20Enable
+SND_SIZE equ 4
+KERNEL_SIZE equ 62
 
 include 'print.inc'
 
-PrintStartup:
-	mov si, start_msg
-	mov ah, 0eh
-	call PrintLine
-	ret
+Start:
+	xor ax, ax
 
-A20Enable:
-	call CheckA20 ; returns 0 if a20 is disabled and 1 if enabled
-	cmp ax, 1
-	je LoadKernel
-	call BIOS_A20
-	call CheckA20
-	cmp ax, 1
-	je LoadKernel
-	call KbA20
-	call CheckA20
-	cmp ax, 1
-	je LoadKernel
-	call FastA20
-	call CheckA20
-	jmp LoadKernel
+	mov ds, ax
+	mov fs, ax
+	mov gs, ax
+	mov es, ax
 
-include 'a20.inc'
+	mov sp, 7c00h
+
+	cld
+
+	Print start_msg
+
+	jmp LoadSND
 
 include 'read_disk.inc'
 
-LoadKernel:
+LoadSND:
 	xor ax, ax
 	mov es, ax
 	mov bx, 1000h
 
-	LoadSectors KERNEL_SIZE, 1 ; 1 + second_stage size in sectors
+	LoadSectors SND_SIZE, 0
 
-GDT:
-	dw (GDT_End - GDT_Start - 1)
-	dd GDT_Start
- 
-ProtectedMode:
-	cli
-	lgdt [GDT]
-	
-	mov eax, cr0
-	or eax, 1
-	mov cr0, eax
+LoadKernel:
 
-	jmp 08h:JumpKernel
+	xor ax, ax
+	mov es, ax
+	mov bx, 2000h
 
-use32
-JumpKernel:
-	mov ax, 10h
+	LoadSectors KERNEL_SIZE, SND_SIZE
+
+JumpSND:
+	xor ax, ax
+
 	mov ds, ax
 	mov fs, ax
-
 	mov gs, ax
 	mov es, ax
 	mov ss, ax
-	mov esp, 09000h
-	mov ebp, esp
 
-	jmp 08h:1000h
-
-include 'gdt.inc'
+	jmp 0h:1000h
 
 start_msg db 'Initializing!', 0
 

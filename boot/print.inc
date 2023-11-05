@@ -1,11 +1,11 @@
 ; asmsyntax=fasm
 
-Print:
-	lodsb
-	int 10h
-	cmp al, 0
-	jne Print
-	ret
+macro Print msg
+{
+	mov si, msg
+	mov ah, 0eh
+	call PrintLine
+}
 
 PrintLine:
 	lodsb

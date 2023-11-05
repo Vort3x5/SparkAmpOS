@@ -24,10 +24,9 @@ macro LBAtoCHS
 
 macro LoadSectors size, start_lba
 {
-	mov ax, start_lba - 1
+	mov ax, start_lba
 
 	.read:
-		inc ax
 		push ax
 		push bx
 		LBAtoCHS
@@ -40,6 +39,7 @@ macro LoadSectors size, start_lba
 
 		add bx, 200h
 		pop ax
-		cmp ax, size
-		jne .read
+		inc ax
+		cmp ax, start_lba + size
+		jl .read
 }

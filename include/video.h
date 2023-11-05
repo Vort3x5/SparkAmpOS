@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdtypes.h"
+#include <stdtypes.h>
 
 #define VGA_ADDR 0xb8000
 
@@ -35,11 +35,11 @@ typedef struct {
 	u32 addr;
 } TTY;
 
+extern TTY *tty;
+
 inline word VgaEntry(byte c, enum Colors color)
 	{ return (word) c | (word) color << 8; }
 
-void TTYInit();
-
-void Clear(TTY *tty);
-void PutC(TTY *tty, char c, enum Colors color);
-void Print(TTY *tty, const char *msg, enum Colors color);
+void Clear();
+void PutC(char c, enum Colors color);
+void Print(const char *msg, enum Colors color);
