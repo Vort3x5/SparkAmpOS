@@ -1,4 +1,4 @@
 target remote localhost:1234
-b *0x7e00
+b *0x1000
 c
 lay asm

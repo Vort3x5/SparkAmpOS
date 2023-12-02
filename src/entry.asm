@@ -19,6 +19,7 @@ section '.text'
 extrn Main
 public _Start
 _Start:
+	mov ebp, stack_bottom
 	mov esp, stack_top
 	cld
 
