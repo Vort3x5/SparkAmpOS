@@ -1,8 +1,9 @@
 ; asmsyntax=fasm
 
 use16
-org 1000h
-mov sp, 1000h
+org 7e00h
+mov sp, 7c00h
+cld
 
 jmp Next
 
@@ -74,13 +75,7 @@ JumpKernel:
 	mov es, ax
 	mov ss, ax
 
-	mov esp, 09000h
-	mov ebp, esp
-	std
-
-	jmp 08h:2000h
-
-	hlt
+	jmp 08h:1000h
 
 include 'gdt.inc'
 
@@ -93,7 +88,6 @@ a20_failed_to_enable_msg db 'Failed To Enable A20!', 0
 
 a20_enabled_msg db 'A20 Enabled!', 0
 
-kernel_loaded_msg db 'Kernel Loaded!', 0
 gdt_loaded_msg db 'GDT Loaded!', 0
 
 times 2048 - ($ - $$) db 0

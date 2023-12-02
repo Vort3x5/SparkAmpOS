@@ -1,7 +1,8 @@
 ASM := fasm
 
 CC := i686-elf-gcc
-CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -I include/
+# CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -I include/
+CFLAGS := -O2 -nostdlib -ffreestanding -Wall -Wextra -I include/
 
 C_SRCS := $(wildcard drivers/*.c src/*.c)
 S_SRCS := $(wildcard src/*.S)
@@ -35,8 +36,10 @@ bin/%.bin: boot/%.asm
 kernel_info:
 	lua scripts/kernel_size.lua
 
+# consider concatenating only
+# $(CC) $(CFLAGS) -e _Start -Ttext 0x1000 -o bin/$@ $^
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -e Main -Ttext 0x2000 -o bin/$@ $^
+	$(CC) $(CFLAGS) -e _Start -o bin/$@ $^
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -e Main -T scripts/link.ld -o $@ $^
@@ -59,7 +62,7 @@ clean:
 	rm -rf boot.iso bin/ iso/ obj/
 	
 # for GRUB use cdrom
-# qemu-system-i386 -cdrom SparkAmpOS
+# qemu-system-i386 -cdrom iso/boot.iso
 
 release:
 	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso

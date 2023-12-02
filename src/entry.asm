@@ -14,22 +14,18 @@ Multiboot:
 	dd 1 or 2
 	dd CHECKSUM
 
-section '.bss' align 16
-
-stack_bottom dd 0
-stack_top equ stack_bottom + 16384
-
 section '.text'
 
 extrn Main
 public _Start
 _Start:
 	mov esp, stack_top
+	cld
 
 	call Main
 	
 	cli
-	hlt
+ 	hlt
 
 extrn idtp
 public _IDTLoad
@@ -40,3 +36,9 @@ _IDTLoad:
 include 'isr.inc'
 
 include 'irq.inc'
+
+section '.bss'
+
+stack_bottom:
+	rb 4096
+stack_top:

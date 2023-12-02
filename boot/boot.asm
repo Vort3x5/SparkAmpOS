@@ -1,7 +1,5 @@
 ; asmsyntax=fasm
 
-format binary
-
 use16
 org 7c00h
 
@@ -10,7 +8,7 @@ jmp Start
 include 'OEMpb.inc'
 
 SND_SIZE equ 4
-KERNEL_SIZE equ 62
+KERNEL_SIZE equ 15
 
 include 'print.inc'
 
@@ -35,7 +33,7 @@ include 'read_disk.inc'
 LoadSND:
 	xor ax, ax
 	mov es, ax
-	mov bx, 1000h
+	mov bx, 7e00h
 
 	LoadSectors SND_SIZE, 0
 
@@ -43,7 +41,7 @@ LoadKernel:
 
 	xor ax, ax
 	mov es, ax
-	mov bx, 2000h
+	mov bx, 1000h
 
 	LoadSectors KERNEL_SIZE, SND_SIZE
 
@@ -56,7 +54,7 @@ JumpSND:
 	mov es, ax
 	mov ss, ax
 
-	jmp 0h:1000h
+	jmp 0h:7e00h
 
 start_msg db 'Initializing!', 0
 
