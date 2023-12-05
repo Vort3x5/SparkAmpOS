@@ -12,6 +12,7 @@ void Main()
 	};
 
 	Clear();
+
 	Print("Start\nEnd\n", WHITE);
 
 	IDTInstall();

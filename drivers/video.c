@@ -2,6 +2,7 @@
 
 #include <stdtypes.h>
 
+#define TTY_DEF
 TTY *tty;
 
 void Clear()
@@ -24,6 +25,7 @@ void PutC(char c, enum Colors color)
 		default:
 			tty->vga_text_buffer[tty->addr] = VgaEntry(c, color);
 			++(tty->addr);
+			break;
 	}
 }
 

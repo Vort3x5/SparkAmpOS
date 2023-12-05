@@ -35,7 +35,11 @@ typedef struct {
 	u32 addr;
 } TTY;
 
+#ifndef TTY_DEF
+
 extern TTY *tty;
+
+#endif
 
 inline word VgaEntry(byte c, enum Colors color)
 	{ return (word) c | (word) color << 8; }

@@ -1,6 +1,5 @@
 floppya: 1_44=iso/boot.iso, status=inserted
 boot: a
 
-display_library: sdl
-# , options="gui_debug"
+display_library: sdl, options="gui_debug"
 megs: 32
