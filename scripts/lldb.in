@@ -1,2 +1,4 @@
-gdb-remote localhost:1234
 target create bin/SparkAmpOS.bin
+# target create SparkAmpOS
+gdb-remote localhost:1234
+b Main

@@ -2,6 +2,7 @@
 
 #include <stdtypes.h>
 #include <io.h>
+#include <clock.h>
 
 void PlaySound(u32 frequence)
 {
@@ -28,6 +29,6 @@ void NoSound()
 void Beep()
 {
 	PlaySound(1000);
-	// Sleep(2000);
+	Sleep(2000);
 	NoSound();
 }

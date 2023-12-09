@@ -1,4 +1,7 @@
 target remote localhost:1234
+# symbol-file SparkAmpOS
 b *0x108b
-c
+# b *0x1a73
+# b Main
+# b *0x7e00
 lay asm

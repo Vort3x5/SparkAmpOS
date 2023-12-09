@@ -11,6 +11,8 @@ void Clear()
 
 	for (s32 i = 0; i < area; ++i)
 		tty->vga_text_buffer[i] = VgaEntry(0, WHITE);
+
+	tty->vga_text_buffer = (word *) VGA_ADDR;
 	tty->addr = 0;
 }
 

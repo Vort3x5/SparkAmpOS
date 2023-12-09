@@ -5,12 +5,10 @@ CC := i686-elf-gcc
 CFLAGS := -O2 -nostdlib -ffreestanding -Wall -Wextra -I include/
 
 C_SRCS := $(wildcard drivers/*.c src/*.c)
-S_SRCS := $(wildcard src/*.S)
 ASM_SRCS := $(wildcard src/*.asm)
 BOOT_SRCS := $(wildcard boot/*.asm)
 
 C_OBJS := $(patsubst %.c, obj/%.o, $(notdir $(C_SRCS)))
-S_OBJS := $(patsubst %.S, obj/%.o, $(notdir $(S_SRCS)))
 ASM_OBJS := $(patsubst %.asm, obj/%.o, $(notdir $(ASM_SRCS)))
 
 BOOT_BINS := $(patsubst %.asm, bin/%.bin, $(notdir $(BOOT_SRCS)))
@@ -25,8 +23,7 @@ all: dirs Entry SparkAmpOS.bin kernel_info $(BOOT_BINS)
 GRUB: dirs Entry SparkAmpOS
 	mkdir -p iso/boot/grub
 	grub-file --is-x86-multiboot SparkAmpOS
-	mv SparkAmpOS boot.iso
-	cp boot.iso iso/boot/boot.iso
+	cp SparkAmpOS iso/boot/boot.iso
 	./scripts/grub.sh
 	grub-mkrescue -o iso/boot.iso iso
 
@@ -42,7 +39,7 @@ SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -e _Start -o bin/$@ $^
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -e Main -T scripts/link.ld -o $@ $^
+	$(CC) $(CFLAGS) -e _Start -T scripts/link.ld -o $@ $^
 
 obj/%.o: drivers/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -59,17 +56,19 @@ dirs:
 	mkdir -p iso/
 
 clean:
-	rm -rf boot.iso bin/ iso/ obj/
+	rm -rf boot.iso SparkAmpOS bin/ iso/ obj/
 	
 # for GRUB use cdrom
 # qemu-system-i386 -cdrom iso/boot.iso
 
 release:
 	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso
+	# qemu-system-i386 -cdrom iso/boot.iso
 
 debug:
 	# bochs -f .bochsrc
 	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso -s -S &
+	# qemu-system-i386 -cdrom iso/boot.iso -s -S &
 	gdb -x scripts/gdb.in
 	# lldb --source scripts/lldb.in
 
