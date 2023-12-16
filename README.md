@@ -4,3 +4,4 @@
 
   # !todo:
 - [Memory Map] (https://wiki.osdev.org/Memory_Map_(x86))
+- [Move Kernel To 1MB Like In GRUB] (https://wiki.osdev.org/Rolling_Your_Own_Bootloader)

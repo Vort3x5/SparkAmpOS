@@ -13,17 +13,17 @@ ASM_OBJS := $(patsubst %.asm, obj/%.o, $(notdir $(ASM_SRCS)))
 
 BOOT_BINS := $(patsubst %.asm, bin/%.bin, $(notdir $(BOOT_SRCS)))
 
-all: dirs Entry SparkAmpOS.bin kernel_info $(BOOT_BINS)
+all: clean dirs Entry SparkAmpOS.bin kernel_info $(BOOT_BINS)
 	dd if=/dev/zero of=iso/boot.iso bs=512 count=2880
 	dd if=./bin/boot.bin of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
 	dd if=./bin/load.bin of=iso/boot.iso conv=notrunc bs=512 seek=1 count=4
 	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso conv=notrunc bs=512 seek=5 count=2048
-	# cat bin/boot.bin bin/load.bin bin/SparkAmpOS.bin > iso/boot.iso - not loading second stage
+	# cat bin/boot.bin bin/load.bin bin/SparkAmpOS.bin > iso/boot.iso # - not loading second stage
 
 GRUB: dirs Entry SparkAmpOS
 	mkdir -p iso/boot/grub
-	grub-file --is-x86-multiboot SparkAmpOS
-	cp SparkAmpOS iso/boot/boot.iso
+	grub-file --is-x86-multiboot bin/SparkAmpOS
+	cp bin/SparkAmpOS iso/boot/boot.iso
 	./scripts/grub.sh
 	grub-mkrescue -o iso/boot.iso iso
 
@@ -36,10 +36,10 @@ kernel_info:
 # consider concatenating only
 # $(CC) $(CFLAGS) -e _Start -Ttext 0x1000 -o bin/$@ $^
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -e _Start -o bin/$@ $^
+	$(CC) $(CFLAGS) -T scripts/link.ld -o bin/$@ $^
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -e _Start -T scripts/link.ld -o $@ $^
+	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $^
 
 obj/%.o: drivers/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -56,7 +56,7 @@ dirs:
 	mkdir -p iso/
 
 clean:
-	rm -rf boot.iso SparkAmpOS bin/ iso/ obj/
+	rm -rf boot.iso bin/ iso/ obj/
 	
 # for GRUB use cdrom
 # qemu-system-i386 -cdrom iso/boot.iso

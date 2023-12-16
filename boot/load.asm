@@ -18,7 +18,7 @@ Next:
 
 	Print snd_loaded_msg 
 
-	jmp MemMap
+	jmp A20Enable
 
 include 'mem_map.inc'
 

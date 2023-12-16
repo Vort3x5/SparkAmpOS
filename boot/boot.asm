@@ -8,7 +8,7 @@ jmp Start
 include 'OEMpb.inc'
 
 SND_SIZE equ 4
-KERNEL_SIZE equ 15
+KERNEL_SIZE equ 23
 
 include 'print.inc'
 

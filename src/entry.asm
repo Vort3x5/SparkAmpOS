@@ -14,7 +14,7 @@ Multiboot:
 	dd 1 or 2
 	dd CHECKSUM
 
-section '.text'
+section '.text' align 4
 
 extrn Main
 public _Start
@@ -26,7 +26,9 @@ _Start:
 	call Main
 	
 	cli
- 	hlt
+halt: 	
+	hlt
+	jmp halt
 
 extrn idtp
 public _IDTLoad
@@ -38,7 +40,7 @@ include 'isr.inc'
 
 include 'irq.inc'
 
-section '.bss'
+section '.bss' align 4
 
 stack_bottom:
 	rb 4096
