@@ -6,7 +6,7 @@
 
 void Main() 
 {
-	TTY *tty = &(TTY) {
+	tty = &(TTY) {
 		.vga_text_buffer = (word *) VGA_ADDR,
 		.addr = 0
 	};

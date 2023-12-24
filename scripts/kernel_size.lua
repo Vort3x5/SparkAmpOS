@@ -25,7 +25,7 @@ else
 end
 
 -- Write New Kernel Size To Bootloader Source Code
-local boot_filepath = "boot/boot.asm"
+local boot_filepath = "boot/sys_init/kernel_size.inc"
 
 local boot_file = io.open(boot_filepath, "r")
 local content = boot_file:read("*all")

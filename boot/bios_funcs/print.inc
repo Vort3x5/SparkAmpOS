@@ -2,6 +2,8 @@
 
 macro Print msg
 {
+	xor ax, ax
+	mov si, ax
 	mov si, msg
 	mov ah, 0eh
 	call PrintLine

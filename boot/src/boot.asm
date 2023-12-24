@@ -5,12 +5,12 @@ org 7c00h
 
 jmp Start
 
-include 'OEMpb.inc'
+include '../sys_init/OEMpb.inc'
 
 SND_SIZE equ 4
-KERNEL_SIZE equ 23
+include '../sys_init/kernel_size.inc'
 
-include 'print.inc'
+include '../bios_funcs/print.inc'
 
 Start:
 	xor ax, ax
@@ -28,12 +28,12 @@ Start:
 
 	jmp LoadSND
 
-include 'read_disk.inc'
+include '../bios_funcs/read_disk.inc'
 
 LoadSND:
 	xor ax, ax
 	mov es, ax
-	mov bx, 7e00h
+	mov bx, 1000h
 
 	LoadSectors SND_SIZE, 0
 
@@ -41,7 +41,7 @@ LoadKernel:
 
 	xor ax, ax
 	mov es, ax
-	mov bx, 1000h
+	mov bx, 2000h
 
 	LoadSectors KERNEL_SIZE, SND_SIZE
 
@@ -54,7 +54,7 @@ JumpSND:
 	mov es, ax
 	mov ss, ax
 
-	jmp 0h:7e00h
+	jmp 0h:1000h
 
 start_msg db 'Initializing!', 0
 
