@@ -38,10 +38,9 @@ LoadSND:
 	LoadSectors SND_SIZE, 0
 
 LoadKernel:
-
 	xor ax, ax
 	mov es, ax
-	mov bx, 2000h
+	mov bx, 7e00h
 
 	LoadSectors KERNEL_SIZE, SND_SIZE
 

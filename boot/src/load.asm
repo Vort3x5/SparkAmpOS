@@ -16,7 +16,7 @@ Next:
 	mov es, ax
 	mov ss, ax
 
-	; Print snd_loaded_msg 
+	Print snd_loaded_msg 
 
 	jmp A20Enable
 
@@ -37,30 +37,30 @@ A20Enable:
 	call CheckA20
 	cmp ax, 1
 	je A20Done
-	; Print a20_bios_failed_msg
+	Print a20_bios_failed_msg
 
 	call KbA20
 	call CheckA20
 	cmp ax, 1
 	je A20Done
-	; Print a20_keyboard_failed_msg
+	Print a20_keyboard_failed_msg
 
 	call FastA20
 	call CheckA20
 	cmp ax, 1
 	je A20Done
-	; Print a20_fast_failed_msg
+	Print a20_fast_failed_msg
 
-	; Print a20_failed_to_enable_msg
+	Print a20_failed_to_enable_msg
 
 A20Done:
-	; Print a20_enabled_msg
+	Print a20_enabled_msg
 
 SetVideoMode:
 	xor ax, ax
 	mov al, 03h
 	int 10h
-	; Print vga_mode_enabled_msg
+	Print vga_mode_enabled_msg
 
 GDT:
 	dw (GDT_End - GDT_Start - 1)
@@ -69,7 +69,7 @@ GDT:
 ProtectedMode:
 	cli
 	lgdt [GDT]
-	; Print gdt_loaded_msg
+	Print gdt_loaded_msg
 	
 	mov eax, cr0
 	or eax, 1
@@ -89,9 +89,9 @@ JumpKernel:
 	mov ss, ax
 
 	; Move Kernel To 1MB Addr
-	Memcpydw 2000h, 100000h, KERNEL_SIZEd
+	Memcpyd 7e00h, 100000h, KERNEL_SIZEd
 
-	jmp 08h:101000h
+	jmp 08h:100000h
 
 include '../sys_init/gdt.inc'
 

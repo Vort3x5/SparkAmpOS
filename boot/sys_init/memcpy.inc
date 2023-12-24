@@ -1,23 +1,47 @@
 ; asmsyntax=fasm
 
-macro Memcpydw src, dest, size
+macro Memcpy src, dest, size
 {
-	pusha
-
 	; Src Buffer
-	mov eax, 2000h
+	mov eax, src
 	mov esi, eax
 
 	; Dest Buffer
 	xor eax, eax
-	mov eax, 100000h
+	mov eax, dest
 	mov edi, eax
 
 	; Size In Bytes
 	xor ecx, ecx
 	mov ecx, size
+}
 
-	; Move!
+macro Memcpyb src, dest, size
+{
+	pusha
+
+	Memcpy src, dest, size
+	rep movsb
+
+	popa
+}
+
+macro Memcpyw src, dest, size
+{
+	pusha
+
+	Memcpy src, dest, size
+	rep movsw
+
+	popa
+}
+
+macro Memcpyd src, dest, size
+{
+	pusha
+
+	Memcpy src, dest, size
 	rep movsd
+
 	popa
 }

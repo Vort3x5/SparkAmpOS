@@ -1,6 +1,6 @@
 ; asmsyntax=fasm
 
-KERNEL_SIZE equ 24
+KERNEL_SIZE equ 58
 ; Kernel Size In Sectors(512 bytes)
 
 KERNEL_SIZEd equ KERNEL_SIZE * (512 / 4)
