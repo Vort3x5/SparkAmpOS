@@ -1,9 +1,10 @@
 ASM := fasm
 CC := i686-elf-gcc
+LD := i686-elf-ld
 CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -D__is_kernel -I include/
 # CFLAGS := -O2 -nostdlib -ffreestanding -Wall -Wextra -D__is_kernel -I include/
 
-C_SRCS := $(wildcard drivers/*.c src/*.c)
+C_SRCS := $(wildcard src/*.c drivers/*.c)
 ASM_SRCS := $(wildcard init/*.asm)
 BOOT_SRCS := $(wildcard boot/src/*.asm)
 
@@ -26,7 +27,7 @@ all: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
 	dd if=./bin/boot.bin of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
 	dd if=./bin/load.bin of=iso/boot.iso conv=notrunc bs=512 seek=1 count=2
 	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso conv=notrunc bs=512 seek=3 count=100
-	# cat bin/boot.bin bin/load.bin bin/SparkAmpOS.bin > iso/boot.iso # - not loading second stage
+	# cat bin/boot.bin bin/load.bin bin/SparkAmpOS.bin /dev/zero | head -c 1474560 > iso/boot.iso # - not loading second stage
 
 GRUB: dirs SparkAmpOS
 	mkdir -p iso/boot/grub
@@ -44,7 +45,7 @@ kernel_info:
 # consider concatenating only
 # $(CC) $(CFLAGS) -e _Start -Ttext 0x1000 -o bin/$@ $^
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -T scripts/link.ld -o bin/$@ $(LINK_LIST)
+	$(LD) --Ttext 0x100000 -s --oformat binary -e _Start -o bin/$@ $(LLD)
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LINK_LIST)
@@ -78,9 +79,9 @@ release:
 
 debug:
 	# bochs -f .bochsrc
-	# qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso -s -S &
-	qemu-system-i386 -cdrom iso/boot.iso -s -S &
-	# gdb -x scripts/db_input.gdb
+	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso -s -S &
+	# qemu-system-i386 -cdrom iso/boot.iso -s -S &
+	gdb -x scripts/db_input.gdb
 	# lldb --source scripts/lldb.in
 
 .PHONY: GRUB clean release debug

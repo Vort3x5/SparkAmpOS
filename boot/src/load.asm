@@ -91,7 +91,7 @@ JumpKernel:
 	; Move Kernel To 1MB Addr
 	Memcpyd 7e00h, 100000h, KERNEL_SIZEd
 
-	jmp 08h:100000h
+	jmp 100000h
 
 include '../sys_init/gdt.inc'
 

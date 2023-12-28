@@ -7,7 +7,7 @@ jmp Start
 
 include '../sys_init/OEMpb.inc'
 
-SND_SIZE equ 4
+SND_SIZE equ 2
 include '../sys_init/kernel_size.inc'
 
 include '../bios_funcs/print.inc'
