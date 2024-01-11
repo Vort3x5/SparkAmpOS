@@ -16,13 +16,11 @@ Multiboot:
 
 section '.text' align 4
 
-extrn _init
 extrn Main
 public _Start
 _Start:
 	mov esp, stack_top
 	cld
-	; call _init
 
 	call Main
 	

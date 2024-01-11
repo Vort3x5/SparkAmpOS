@@ -36,10 +36,14 @@ macro LoadSectors size, start_lba
 		inc cl
 		pop bx
 		int 13h
+		jc .error
 
 		add bx, 200h
 		pop ax
 		inc ax
 		cmp ax, start_lba + size
 		jl .read
+
+	.error:
+		hlt
 }

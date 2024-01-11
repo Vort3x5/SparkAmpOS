@@ -9,25 +9,23 @@ ASM_SRCS := $(wildcard init/*.asm)
 BOOT_SRCS := $(wildcard boot/src/*.asm)
 
 C_OBJS := $(patsubst %.c, obj/%.o, $(notdir $(C_SRCS)))
-ASM_OBJS := \
-	$(patsubst %.asm, obj/%.o, $(notdir $(ASM_SRCS))) \
-	obj/crtbegin.o obj/crtend.o \
+ASM_OBJS := $(patsubst %.asm, obj/%.o, $(notdir $(ASM_SRCS)))
 
 BOOT_BINS := $(patsubst %.asm, bin/%.bin, $(notdir $(BOOT_SRCS)))
 
-LINK_LIST := \
-	obj/crti.o obj/crtbegin.o \
-	obj/entry.o $(C_OBJS) \
-	obj/crtend.o obj/crtn.o
-
 LLD := obj/entry.o $(C_OBJS)
 
+DRIVE := /dev/sdb
+
 all: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
-	dd if=/dev/zero of=iso/boot.iso bs=512 count=2880
-	dd if=./bin/boot.bin of=iso/boot.iso conv=notrunc bs=512 seek=0 count=1
-	dd if=./bin/load.bin of=iso/boot.iso conv=notrunc bs=512 seek=1 count=2
-	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso conv=notrunc bs=512 seek=3 count=100
-	# cat bin/boot.bin bin/load.bin bin/SparkAmpOS.bin /dev/zero | head -c 1474560 > iso/boot.iso # - not loading second stage
+	dd if=./bin/boot.bin of=iso/boot.iso bs=512 seek=0 count=1
+	dd if=./bin/load.bin of=iso/boot.iso bs=512 seek=1 count=2
+	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso bs=512 seek=3 count=100
+
+usb: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
+	sudo dd if=./bin/boot.bin of=$(DRIVE) bs=512 count=1
+	sudo dd if=./bin/load.bin of=$(DRIVE) bs=512 seek=1
+	sudo dd if=./bin/SparkAmpOS.bin of=$(DRIVE) bs=512 seek=3
 
 GRUB: dirs SparkAmpOS
 	mkdir -p iso/boot/grub
@@ -42,16 +40,12 @@ bin/%.bin: boot/src/%.asm
 kernel_info:
 	lua scripts/kernel_size.lua
 
-# consider concatenating only
 # $(CC) $(CFLAGS) -e _Start -Ttext 0x1000 -o bin/$@ $^
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
 	$(LD) --Ttext 0x100000 -s --oformat binary -e _Start -o bin/$@ $(LLD)
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
-	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LINK_LIST)
-
-obj/crtbegin.o obj/crtend.o:
-	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
+	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LLD)
 
 obj/%.o: drivers/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -67,21 +61,24 @@ dirs:
 	mkdir -p bin/
 	mkdir -p iso/
 
+# For USB Flash Drive: 
+# sudo mkfs.fat -F32 $(DRIVE) &
 clean:
 	rm -rf boot.iso bin/ iso/ obj/
 	
 # for GRUB use cdrom
 # qemu-system-i386 -cdrom iso/boot.iso
+#
+# for USB use -hdb
+# sudo qemu-system-i386 -hdb $(DRIVE)
 
 release:
 	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso
-	# qemu-system-i386 -cdrom iso/boot.iso
 
+# bochs -f .bochsrc
 debug:
-	# bochs -f .bochsrc
 	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso -s -S &
 	# qemu-system-i386 -cdrom iso/boot.iso -s -S &
 	gdb -x scripts/db_input.gdb
-	# lldb --source scripts/lldb.in
 
 .PHONY: GRUB clean release debug

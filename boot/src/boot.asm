@@ -36,6 +36,7 @@ LoadSND:
 	mov bx, 1000h
 
 	LoadSectors SND_SIZE, 0
+	Print snd_read_msg
 
 LoadKernel:
 	xor ax, ax
@@ -43,6 +44,7 @@ LoadKernel:
 	mov bx, 7e00h
 
 	LoadSectors KERNEL_SIZE, SND_SIZE
+	Print kernel_read_msg
 
 JumpSND:
 	xor ax, ax
@@ -56,6 +58,8 @@ JumpSND:
 	jmp 0h:1000h
 
 start_msg db 'Initializing!', 0
+snd_read_msg db 'Second Stage Read!', 0
+kernel_read_msg db 'Kernel Read!', 0
 
 times 510 - ($ - $$) db 0
 dw 0xaa55

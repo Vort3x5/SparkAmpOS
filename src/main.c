@@ -15,14 +15,14 @@ void Main()
 
 	Print("Start\nEnd\n", WHITE);
 
-	// IDTInstall();
-	// ISRsInstall();
-	// InstallIRQ();
-	// __asm__("sti");
+	IDTInstall();
+	ISRsInstall();
+	InstallIRQ();
+	__asm__("sti");
 
-	// InstallTimer();
+	InstallTimer();
 
-	// Sleep(2000);
+	// Sleep(2);
 	Clear();
 	Print("Finish", WHITE);
 }
