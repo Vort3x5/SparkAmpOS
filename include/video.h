@@ -41,7 +41,7 @@ extern TTY *tty;
 
 #endif
 
-inline word VgaEntry(byte c, enum Colors color)
+static inline word VgaEntry(byte c, enum Colors color)
 	{ return (word) c | (word) color << 8; }
 
 void Clear();

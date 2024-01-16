@@ -6,6 +6,7 @@ org 7c00h
 jmp Start
 
 include '../sys_init/OEMpb.inc'
+F12OEM
 
 SND_SIZE equ 2
 include '../sys_init/kernel_size.inc'
@@ -21,11 +22,11 @@ Start:
 	mov es, ax
 
 	mov sp, 7c00h
-
 	cld
 
 	Print start_msg
 
+	; jmp GetDriveParams
 	jmp LoadSND
 
 include '../bios_funcs/read_disk.inc'

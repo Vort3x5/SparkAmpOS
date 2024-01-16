@@ -31,26 +31,26 @@ void RemapIRQ(void)
 	OutPortB(0xA1, 0x0);
 }
 
-void InstallIRQ()
+void IRQsInstall()
 {
 	RemapIRQ();
 
-	IDTSetGate(32, (unsigned)IRQ_0, 0x08, 0x8e);
-	IDTSetGate(33, (unsigned)IRQ_1, 0x08, 0x8e);
-	IDTSetGate(34, (unsigned)IRQ_2, 0x08, 0x8e);
-	IDTSetGate(35, (unsigned)IRQ_3, 0x08, 0x8e);
-	IDTSetGate(36, (unsigned)IRQ_4, 0x08, 0x8e);
-	IDTSetGate(37, (unsigned)IRQ_5, 0x08, 0x8e);
-	IDTSetGate(38, (unsigned)IRQ_6, 0x08, 0x8e);
-	IDTSetGate(39, (unsigned)IRQ_7, 0x08, 0x8e);
-	IDTSetGate(40, (unsigned)IRQ_8, 0x08, 0x8e);
-	IDTSetGate(41, (unsigned)IRQ_9, 0x08, 0x8e);
-	IDTSetGate(42, (unsigned)IRQ_10, 0x08, 0x8e);
-	IDTSetGate(43, (unsigned)IRQ_11, 0x08, 0x8e);
-	IDTSetGate(44, (unsigned)IRQ_12, 0x08, 0x8e);
-	IDTSetGate(45, (unsigned)IRQ_13, 0x08, 0x8e);
-	IDTSetGate(46, (unsigned)IRQ_14, 0x08, 0x8e);
-	IDTSetGate(47, (unsigned)IRQ_15, 0x08, 0x8e);
+	IDTSetGate(32, (dword)IRQ_0, 0x08, 0x8e);
+	IDTSetGate(33, (dword)IRQ_1, 0x08, 0x8e);
+	IDTSetGate(34, (dword)IRQ_2, 0x08, 0x8e);
+	IDTSetGate(35, (dword)IRQ_3, 0x08, 0x8e);
+	IDTSetGate(36, (dword)IRQ_4, 0x08, 0x8e);
+	IDTSetGate(37, (dword)IRQ_5, 0x08, 0x8e);
+	IDTSetGate(38, (dword)IRQ_6, 0x08, 0x8e);
+	IDTSetGate(39, (dword)IRQ_7, 0x08, 0x8e);
+	IDTSetGate(40, (dword)IRQ_8, 0x08, 0x8e);
+	IDTSetGate(41, (dword)IRQ_9, 0x08, 0x8e);
+	IDTSetGate(42, (dword)IRQ_10, 0x08, 0x8e);
+	IDTSetGate(43, (dword)IRQ_11, 0x08, 0x8e);
+	IDTSetGate(44, (dword)IRQ_12, 0x08, 0x8e);
+	IDTSetGate(45, (dword)IRQ_13, 0x08, 0x8e);
+	IDTSetGate(46, (dword)IRQ_14, 0x08, 0x8e);
+	IDTSetGate(47, (dword)IRQ_15, 0x08, 0x8e);
 }
 
 void HandleIRQ(struct Regs *r)

@@ -86,5 +86,5 @@ extern void IRQ_15();
 void InstallIRQHandler(s32 irq, void (*handler)(struct Regs *r));
 void UninstallIRQHandler(s32 irq);
 void RemapIRQ(void);
-void InstallIRQ();
+void IRQsInstall();
 void HandleIRQ(struct Regs *r);

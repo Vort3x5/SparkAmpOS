@@ -22,7 +22,9 @@ void IDTInstall()
 	idtp.limit = (sizeof (struct IDT_Entry) * 256) - 1;
 	idtp.base = (dword) &idt[0];
 
-	// Memset(&idt, 0, sizeof (struct IDT_Entry) * 256);
+	Memset((void *)&idt[0], 0, (sizeof (struct IDT_Entry)) * 256);
+    // for (s32 i = 0; i < 256; ++i)
+		// idt[i] = (struct IDT_Entry) {0};
 
 	_IDTLoad();
 }

@@ -17,12 +17,15 @@ void Main()
 
 	IDTInstall();
 	ISRsInstall();
-	InstallIRQ();
+	IRQsInstall();
 	__asm__("sti");
+
+	s32 x = 5 / 0;
+	while (x);
 
 	InstallTimer();
 
-	// Sleep(2);
+    // Sleep(2);
 	Clear();
 	Print("Finish", WHITE);
 }

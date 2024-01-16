@@ -1,8 +1,8 @@
 ASM := fasm
 CC := i686-elf-gcc
 LD := i686-elf-ld
-CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -D__is_kernel -I include/
-# CFLAGS := -O2 -nostdlib -ffreestanding -Wall -Wextra -D__is_kernel -I include/
+# CFLAGS := -O2 -g -nostdlib -ffreestanding -Wall -Wextra -D__is_kernel -I include/
+CFLAGS := -O2 -nostdlib -ffreestanding -Wall -Wextra -D__is_kernel -I include/
 
 C_SRCS := $(wildcard src/*.c drivers/*.c)
 ASM_SRCS := $(wildcard init/*.asm)
@@ -18,14 +18,14 @@ LLD := obj/entry.o $(C_OBJS)
 DRIVE := /dev/sdb
 
 all: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
-	dd if=./bin/boot.bin of=iso/boot.iso bs=512 seek=0 count=1
-	dd if=./bin/load.bin of=iso/boot.iso bs=512 seek=1 count=2
-	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso bs=512 seek=3 count=100
-
-usb: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
 	sudo dd if=./bin/boot.bin of=$(DRIVE) bs=512 count=1
 	sudo dd if=./bin/load.bin of=$(DRIVE) bs=512 seek=1
 	sudo dd if=./bin/SparkAmpOS.bin of=$(DRIVE) bs=512 seek=3
+
+floppy: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
+	dd if=./bin/boot.bin of=iso/boot.iso bs=512 seek=0 count=1
+	dd if=./bin/load.bin of=iso/boot.iso bs=512 seek=1 count=2
+	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso bs=512 seek=3 count=100
 
 GRUB: dirs SparkAmpOS
 	mkdir -p iso/boot/grub
@@ -61,24 +61,21 @@ dirs:
 	mkdir -p bin/
 	mkdir -p iso/
 
-# For USB Flash Drive: 
-# sudo mkfs.fat -F32 $(DRIVE) &
 clean:
 	rm -rf boot.iso bin/ iso/ obj/
 	
 # for GRUB use cdrom
 # qemu-system-i386 -cdrom iso/boot.iso
 #
-# for USB use -hdb
-# sudo qemu-system-i386 -hdb $(DRIVE)
+# for floppy
+# qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso
 
 release:
-	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso
+	sudo qemu-system-i386 -hdb $(DRIVE)
 
 # bochs -f .bochsrc
 debug:
-	qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso -s -S &
-	# qemu-system-i386 -cdrom iso/boot.iso -s -S &
+	sudo qemu-system-i386 -hdb $(DRIVE) -s -S &
 	gdb -x scripts/db_input.gdb
 
 .PHONY: GRUB clean release debug
