@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdtypes.h>
-#include <pic.h>
+#include <interrupts.h>
 
 #ifndef TIMER_DEF
 

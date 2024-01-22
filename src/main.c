@@ -1,8 +1,7 @@
 #include <stdtypes.h>
 #include <video.h>
-#include <audio.h>
-#include <pic.h>
-#include <clock.h>
+#include <interrupts.h>
+#include <pci.h>
 
 void Main() 
 {
@@ -13,19 +12,14 @@ void Main()
 
 	Clear();
 
-	Print("Start\nEnd\n", WHITE);
+	Print("Start!\n", WHITE);
 
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
 	__asm__("sti");
 
-	s32 x = 5 / 0;
-	while (x);
+	ScanPCI();
 
-	InstallTimer();
-
-    // Sleep(2);
-	Clear();
-	Print("Finish", WHITE);
+	Print("Finish!", WHITE);
 }

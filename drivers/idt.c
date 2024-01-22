@@ -1,4 +1,4 @@
-#include <pic.h>
+#include <interrupts.h>
 
 #include <stdtypes.h>
 #include <memory.h>
