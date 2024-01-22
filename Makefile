@@ -18,14 +18,14 @@ LLD := obj/entry.o $(C_OBJS)
 DRIVE := /dev/sdb
 
 all: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
-	sudo dd if=./bin/boot.bin of=$(DRIVE) bs=512 count=1
-	sudo dd if=./bin/load.bin of=$(DRIVE) bs=512 seek=1
-	sudo dd if=./bin/SparkAmpOS.bin of=$(DRIVE) bs=512 seek=3
+	dd if=./bin/boot.bin of=$(DRIVE) bs=512 count=1
+	dd if=./bin/load.bin of=$(DRIVE) bs=512 seek=1
+	dd if=./bin/SparkAmpOS.bin of=$(DRIVE) bs=512 seek=3
 
 floppy: dirs SparkAmpOS.bin kernel_info $(BOOT_BINS)
-	dd if=./bin/boot.bin of=iso/boot.iso bs=512 seek=0 count=1
-	dd if=./bin/load.bin of=iso/boot.iso bs=512 seek=1 count=2
-	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso bs=512 seek=3 count=100
+	dd if=./bin/boot.bin of=iso/boot.iso bs=512 count=1
+	dd if=./bin/load.bin of=iso/boot.iso bs=512 seek=1
+	dd if=./bin/SparkAmpOS.bin of=iso/boot.iso bs=512 seek=3
 
 GRUB: dirs SparkAmpOS
 	mkdir -p iso/boot/grub
@@ -70,12 +70,13 @@ clean:
 # for floppy
 # qemu-system-i386 -audiodev pa,id=snd0 -machine pcspk-audiodev=snd0 -fda iso/boot.iso
 
+# sudo chown <username> $(DRIVE)
 release:
-	sudo qemu-system-i386 -hdb $(DRIVE)
+	qemu-system-i386 -audio driver=pa,model=hda,id=snd0 -hdb $(DRIVE)
 
 # bochs -f .bochsrc
 debug:
-	sudo qemu-system-i386 -hdb $(DRIVE) -s -S &
+	qemu-system-i386 -audio driver=pa,model=hda,id=snd0 -hdb $(DRIVE) -s -S &
 	gdb -x scripts/db_input.gdb
 
 .PHONY: GRUB clean release debug
