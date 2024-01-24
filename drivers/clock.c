@@ -1,9 +1,9 @@
+#define TIMER_DEF
 #include <clock.h>
 
 #include <interrupts.h>
 #include <io.h>
 
-#define TIMER_DEF
 u32 timer_ticks = 0;
 
 void TimerPhase(s32 hz)

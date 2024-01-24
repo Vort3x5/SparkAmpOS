@@ -1,8 +1,8 @@
+#define TTY_DEF
 #include <video.h>
 
 #include <stdtypes.h>
 
-#define TTY_DEF
 TTY *tty;
 
 void Clear()

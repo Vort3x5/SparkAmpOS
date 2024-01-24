@@ -1,5 +1,3 @@
-; asmsyntax=fasm
-
 use16
 org 7c00h
 

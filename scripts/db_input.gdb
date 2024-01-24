@@ -1,6 +1,6 @@
 target remote localhost:1234
 # symbol-file bin/SparkAmpOS
-symbol-file bin/SparkAmpOS.bin
-b _Start
+b *0x100000
 c
+set disassembly-flavor intel
 lay asm
