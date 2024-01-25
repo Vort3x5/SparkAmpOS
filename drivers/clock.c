@@ -14,7 +14,8 @@ void TimerPhase(s32 hz)
 	OutB(0x40, divisor >> 8);
 }
 
-void HandleTimer(struct Regs *r)
+// void HandleTimer(struct Regs *r)
+void HandleTimer()
 {
 	++timer_ticks;
 }

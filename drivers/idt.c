@@ -3,7 +3,7 @@
 #include <stdtypes.h>
 #include <memory.h>
 
-struct IDT_Entry idt[256];
+static struct IDT_Entry idt[256];
 struct IDT_Ptr idtp;
 
 void IDTSetGate(byte index, dword base, word sel, byte flags)

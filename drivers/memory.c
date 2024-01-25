@@ -1,4 +1,3 @@
-#include <stdint.h>
 #define MEM_DEF
 #include <memory.h>
 
@@ -7,8 +6,8 @@
 
 u32 mmap_size;
 struct MemMapEntry *mmap;
-void *curr_addr;
-u64 curr_entry;
+u64 curr_addr;
+u64 curr_entry = 0;
 
 void Memset(void *src, s32 value, s32 size)
 {
@@ -22,16 +21,15 @@ void InitDMem()
 {
 	mmap_size = *((u32 *)0x2000);
 	mmap = (struct MemMapEntry *)0x2004;
-	curr_addr = (void *)mmap->base;
-	curr_entry = 0;
+	curr_addr = mmap->base;
 }
 
-void *Malloc(u64 len)
+u64 Malloc(u64 len)
 {
-	void *end_addr = (void *)(mmap[curr_entry].base + mmap[curr_entry].len);
+	u64 end_addr = (mmap[curr_entry].base + mmap[curr_entry].len);
 	if (end_addr - curr_addr >= len)
 	{
-		void *res = curr_addr;
+		u64 res = curr_addr;
 		curr_addr += len;
 		return res;
 	}
@@ -43,19 +41,19 @@ void *Malloc(u64 len)
 			Print("ERROR: No Memory Free\n", RED);
 			__asm__("hlt");
 		}
-		curr_addr = (void *)(mmap[curr_entry].base + len);
-		return (void *)mmap[curr_entry].base;
+		curr_addr = (mmap[curr_entry].base + len);
+		return mmap[curr_entry].base;
 	}
 	Print("ERROR: No Memory Free\n", RED);
 	__asm__("hlt");
 	return 0;
 }
 
-void *AlignedMalloc(u64 len, u64 alignment)
+u64 AlignedMalloc(u64 len, u64 alignment)
 {
-	void *buffer = Malloc(len + alignment - 1);
-	uintptr_t aligned_addr = ((uintptr_t)buffer + alignment - 1) & ~(alignment - 1);
+	u64 buffer = Malloc(len + alignment - 1);
+	u64 aligned_addr = ((u64)buffer + alignment - 1) & ~(alignment - 1);
 
-	curr_addr = (void *)aligned_addr;
-	return (void *)aligned_addr;
+	curr_addr = aligned_addr;
+	return aligned_addr;
 }

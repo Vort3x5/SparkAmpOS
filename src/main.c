@@ -3,7 +3,7 @@
 #include <interrupts.h>
 #include <memory.h>
 #include <pci.h>
-#include <audio.h>
+#include <clock.h>
 
 void Main() 
 {

@@ -14,7 +14,7 @@ struct MemMapEntry
 
 extern u32 mmap_size;
 extern struct MemMapEntry *mmap;
-extern void *curr_addr;
+extern u64 curr_addr;
 extern u64 curr_entry;
 
 #endif
@@ -22,5 +22,5 @@ extern u64 curr_entry;
 void Memset(void *src, s32 value, s32 size);
 
 void InitDMem();
-void *Malloc(u64 len);
-void *AlignedMalloc(u64 len, u64 alignment);
+u64 Malloc(u64 len);
+u64 AlignedMalloc(u64 len, u64 alignment);
