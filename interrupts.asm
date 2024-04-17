@@ -30,6 +30,7 @@ idt_ptr IDT_Ptr
 rb idt_ptr_size
 
 extrn Memset
+public _IDTLoad
 _IDTLoad:
 	mov [idt_ptr + IDT_Ptr.limit], (idt_entry_size * 256) - 1
 	mov [idt_ptr + IDT_Ptr.base], idt
