@@ -1,3 +1,5 @@
+; asmsyntax=fasm
+
 format ELF
 
 ALN			equ 1<<0 ; ALIGN is a keyword in fasm

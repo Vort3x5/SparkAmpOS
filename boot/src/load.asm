@@ -1,3 +1,5 @@
+; asmsyntax=fasm
+
 use16
 org 1000h
 

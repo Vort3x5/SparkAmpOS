@@ -1,3 +1,5 @@
+; asmsyntax=fasm
+
 format elf
 
 struc IDT_Entry
