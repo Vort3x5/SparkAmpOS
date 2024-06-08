@@ -3,7 +3,7 @@
 #include <stdtypes.h>
 #include <io.h>
 #include <video.h>
-#include <audio.h>
+#include <hda.h>
 
 void ScanPCI()
 {
