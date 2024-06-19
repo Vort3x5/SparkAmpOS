@@ -72,11 +72,11 @@ clean:
 
 # sudo chown <username> $(DRIVE)
 release:
-	qemu-system-i386 -audio driver=pa,model=hda,id=snd0 -hdb $(DRIVE)
+	qemu-system-i386  -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE)
 
 # bochs -f .bochsrc
 debug:
-	qemu-system-i386 -audio driver=pa,model=hda,id=snd0 -hdb $(DRIVE) -s -S &
+	qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE) -s -S &
 	gdb -x scripts/db_input.gdb
 
 .PHONY: GRUB clean release debug
