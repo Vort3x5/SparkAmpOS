@@ -3,8 +3,8 @@
 #include <stdtypes.h>
 
 #define HDA_UNINITIALIZED   0x0
-#define HDA_CORB_RIRB       0x1
-#define HDA_PIO             0x2
+#define HDA_CORB_RIRB       0x01
+#define HDA_PIO             0x02
 
 #define HDA_REG_CTLR        0x08
 
@@ -25,6 +25,26 @@
 #define HDA_REG_RIRBCTL     0x5C
 #define HDA_REG_RIRBSTS     0x5D
 #define HDA_REG_RIRBSIZE    0x5E
+
+
+#define HDA_REG_STATESTS            0x0E
+#define HDA_REG_WAKEEN              0x0C
+#define HDA_REG_WAKEEN_ENABLE       0xFFFF
+#define HDA_REG_SDCTL_STREAM_NUMBER 20
+
+#define HDA_REG_SDLPIB(stream)   (0x8 + stream * 0x20)
+#define HDA_REG_SDCBL(stream)    (0x10 + stream * 0x20)
+#define HDA_REG_SDLVI(stream)    (0x14 + stream * 0x20)
+#define HDA_REG_SDCTL(stream)    (0x20 + stream * 0x20)
+#define HDA_REG_SDFMT(stream)    (0x12 + stream * 0x20)
+#define HDA_REG_SDBDPL(stream)   (0x18 + stream * 0x20)
+#define HDA_REG_SDBDPU(stream)   (0x1C + stream * 0x20)
+
+#define HDA_CORBCTL_RUN 0x02
+#define HDA_RIRBCTL_RUN 0x02
+
+#define HDA_CODEC_ADDRESS 0
+#define HDA_CODEC_NODE_ID 2
 
 typedef struct {
 	bool present;
@@ -57,3 +77,6 @@ extern u32 selected_hda;
 
 void HDAReset();
 void HDAInit();
+
+void HDASendCommand(u32 command);
+u32 HDAReadResponse();
