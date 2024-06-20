@@ -3,7 +3,7 @@
 #include <interrupts.h>
 #include <memory.h>
 #include <pci.h>
-#include <clock.h>
+#include <hda.h>
 
 void Main() 
 {
@@ -23,6 +23,8 @@ void Main()
 	InitDMem();
 
 	ScanPCI();
+
+	HDAInit();
 
 	Print("Finish!", WHITE);
 }
