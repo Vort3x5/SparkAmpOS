@@ -37,6 +37,14 @@ void Print(const char *msg, enum Colors color)
 		PutC(msg[i], color);
 }
 
-void PrintNum(u64 num)
+void PrintNum(u64 num, enum Colors color)
 {
+	char *msg = 0, *backward = 0;
+	s32 len;
+	for (len = 0; num; ++len, num /= 10)
+		backward[len] = (num % 10) + '0';
+
+	for (s32 i = 0, j = len - 1; i < len; ++i, --j)
+		msg[i] = backward[j];
+	Print(msg, color);
 }

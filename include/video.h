@@ -47,4 +47,4 @@ static inline word VgaEntry(byte c, enum Colors color)
 void Clear();
 void PutC(char c, enum Colors color);
 void Print(const char *msg, enum Colors color);
-void PrintNum(u64 num);
+void PrintNum(u64 num, enum Colors color);

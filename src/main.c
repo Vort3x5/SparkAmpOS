@@ -30,6 +30,8 @@ void Main()
 	HDAIdentifyCodecs();
 	HDAConfigCodec();
 
+	// PrintNum(hda_sc[hda_sc_ptr].base, GREEN);
+
 	u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
 	LoadAudioData(audio_buff);
 	HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
