@@ -46,6 +46,9 @@
 #define HDA_CODEC_ADDRESS 0
 #define HDA_CODEC_NODE_ID 2
 
+#define HDA_STREAM_ID 1
+#define HDA_STREAM_FORMAT 0x0011
+
 typedef struct {
 	bool present;
 	u32 base;
@@ -80,3 +83,13 @@ void HDAInit();
 
 void HDASendCommand(u32 command);
 u32 HDAReadResponse();
+
+void HDACodecCommand(u32 verb, u32 payload);
+void HDAIdentifyCodecs();
+void HDAConfigCodec();
+
+void HDAConfigOutStream(u32 buff_addr, u32 buff_size);
+
+#define AUDIO_SAMPLE_SIZE 8192
+void LoadAudioData(u32 buff_addr);
+void StartAudioPlayback();

@@ -13,18 +13,30 @@ void Main()
 	};
 	Clear();
 
+	/*
 	Print("Start!\n", WHITE);
 
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
 	__asm__("sti");
+	*/
 
 	InitDMem();
 
 	ScanPCI();
 
 	HDAInit();
+	HDAIdentifyCodecs();
+	HDAConfigCodec();
+
+	u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
+	LoadAudioData(audio_buff);
+	HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
+	StartAudioPlayback();
+	// while (1);
+	__asm__("cli");
+	__asm__("hlt");
 
 	Print("Finish!", WHITE);
 }

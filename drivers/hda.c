@@ -4,6 +4,7 @@
 #include <io.h>
 #include <pci.h>
 #include <memory.h>
+#include <video.h>
 
 HDA hda_sc[10];
 u32 hda_sc_ptr;
@@ -77,4 +78,61 @@ u32 HDAReadResponse()
 	rirb_wp = (rirb_wp + 1) % HDA_REG_RIRBSIZE;
 	MMOutW(hda_base + HDA_REG_RIRBWP, rirb_wp);
 	return response;
+}
+
+void HDACodecCommand(u32 verb, u32 payload)
+{
+	u32 cmd = 
+		(HDA_CODEC_ADDRESS << 28) 
+		| (HDA_CODEC_NODE_ID << 20) 
+		| (verb << 8) 
+		| (payload & 0xff);
+	HDASendCommand(cmd);
+}
+
+void HDAIdentifyCodecs()
+{
+	u32 hda_base = hda_sc[hda_sc_ptr].base;
+	MMOutL(hda_base + HDA_REG_WAKEEN, HDA_REG_WAKEEN_ENABLE);
+	u16 statests = MMInW(hda_base + HDA_REG_STATESTS);
+
+	byte num = 'A';
+	for (s32 i = 0; i < 15; ++i, ++num)
+		if (statests & (1 << i))
+			__asm__("nop");
+}
+
+void HDAConfigCodec()
+{
+	HDACodecCommand(0xf00, 0x00);
+	HDACodecCommand(0xf01, 0x00);
+}
+
+void HDAConfigOutStream(u32 buff_addr, u32 buff_size)
+{
+	u32 hda_base = hda_sc[hda_sc_ptr].base;
+
+	MMOutL(hda_base + HDA_REG_SDBDPL(HDA_STREAM_ID), (u32)(buff_addr & 0xffffffff));
+	MMOutL(hda_base + HDA_REG_SDBDPU(HDA_STREAM_ID), (u32)((buff_addr >> 32) & 0xffffffff));
+
+	MMOutL(hda_base + HDA_REG_SDCBL(HDA_STREAM_ID), buff_size);
+
+	MMOutW(hda_base + HDA_REG_SDLVI(HDA_STREAM_ID), (buff_size / 4096) - 1);
+
+	MMOutW(hda_base + HDA_REG_SDFMT(HDA_STREAM_ID), HDA_STREAM_FORMAT);
+
+	MMOutL(hda_base + HDA_REG_SDCTL(HDA_STREAM_ID), (HDA_STREAM_ID << HDA_REG_SDCTL_STREAM_NUMBER) | 0x02);
+}
+
+void LoadAudioData(u32 audio_buff)
+{
+	for (s32 i = 0; i < AUDIO_SAMPLE_SIZE; ++i)
+		((u8 *)audio_buff)[i]= (i % 256) - 128;
+}
+
+void StartAudioPlayback()
+{
+	u32 hda_base = hda_sc[hda_sc_ptr].base;
+	MMOutL(hda_base + HDA_REG_SDCTL(HDA_STREAM_ID), 
+			MMInL(hda_base + HDA_REG_SDCTL(HDA_STREAM_ID)) | 0x02);
 }

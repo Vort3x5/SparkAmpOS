@@ -36,3 +36,7 @@ void Print(const char *msg, enum Colors color)
 	for (s32 i = 0; msg[i]; ++i)
 		PutC(msg[i], color);
 }
+
+void PrintNum(u64 num)
+{
+}
