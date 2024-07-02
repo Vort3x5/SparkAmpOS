@@ -96,10 +96,9 @@ void HDAIdentifyCodecs()
 	MMOutL(hda_base + HDA_REG_WAKEEN, HDA_REG_WAKEEN_ENABLE);
 	u16 statests = MMInW(hda_base + HDA_REG_STATESTS);
 
-	byte num = 'A';
-	for (s32 i = 0; i < 15; ++i, ++num)
+	for (s32 i = 0; i < 15; ++i)
 		if (statests & (1 << i))
-			__asm__("nop");
+			PrintNum(i, GREEN);
 }
 
 void HDAConfigCodec()

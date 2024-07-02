@@ -51,7 +51,7 @@ u64 Malloc(u64 len)
 
 u64 AlignedMalloc(u64 len, u64 alignment)
 {
-	u64 buffer = Malloc(len + alignment - 1);
+	u64 buffer = (u64)Malloc(len + alignment - 1);
 	u64 aligned_addr = ((u64)buffer + alignment - 1) & ~(alignment - 1);
 
 	curr_addr = aligned_addr;

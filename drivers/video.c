@@ -2,6 +2,7 @@
 #include <video.h>
 
 #include <stdtypes.h>
+#include <memory.h>
 
 TTY *tty;
 
@@ -39,12 +40,20 @@ void Print(const char *msg, enum Colors color)
 
 void PrintNum(u64 num, enum Colors color)
 {
-	char *msg = 0, *backward = 0;
-	s32 len;
-	for (len = 0; num; ++len, num /= 10)
-		backward[len] = (num % 10) + '0';
+	u64 buff = num;
+ 	u16 len = 0;
+	while (buff)
+	{
+		++len;
+		buff /= 10;
+	}
+
+	char *backward = (char *)Malloc(len), *msg = (char *)Malloc(len + 1);
+	for (s32 i = 0; i < len; ++i, num /= 10)
+		backward[i] = '0' + (num % 10);
 
 	for (s32 i = 0, j = len - 1; i < len; ++i, --j)
 		msg[i] = backward[j];
+	msg[len] = '\0';
 	Print(msg, color);
 }

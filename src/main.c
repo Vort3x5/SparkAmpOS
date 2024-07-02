@@ -13,9 +13,9 @@ void Main()
 	};
 	Clear();
 
-	/*
 	Print("Start!\n", WHITE);
 
+	/*
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
@@ -29,9 +29,6 @@ void Main()
 	HDAInit();
 	HDAIdentifyCodecs();
 	HDAConfigCodec();
-
-	// u32 x = 53;
-	// PrintNum(x, GREEN);
 
 	u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
 	LoadAudioData(audio_buff);
