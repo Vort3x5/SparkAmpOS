@@ -40,6 +40,11 @@ void Print(const char *msg, enum Colors color)
 
 void PrintNum(u64 num, enum Colors color)
 {
+	if (!num)
+	{
+		Print("0\n", color);
+		return;
+	}
 	u64 buff = num;
  	u16 len = 0;
 	while (buff)
@@ -56,4 +61,5 @@ void PrintNum(u64 num, enum Colors color)
 		msg[i] = backward[j];
 	msg[len] = '\0';
 	Print(msg, color);
+	PutC('\n', WHITE);
 }

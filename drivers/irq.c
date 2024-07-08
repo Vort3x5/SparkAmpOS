@@ -7,7 +7,7 @@ void *irq_routines[16] =
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void InstallIRQHandler(s32 irq, void (*handler)(struct Regs *))
+void InstallIRQHandler(s32 irq, void *handler)
 {
 	irq_routines[irq] = handler;
 }
@@ -35,22 +35,22 @@ void IRQsInstall()
 {
 	RemapIRQ();
 
-	IDTSetGate(32, (dword)IRQ_0, 0x08, 0x8e);
-	IDTSetGate(33, (dword)IRQ_1, 0x08, 0x8e);
-	IDTSetGate(34, (dword)IRQ_2, 0x08, 0x8e);
-	IDTSetGate(35, (dword)IRQ_3, 0x08, 0x8e);
-	IDTSetGate(36, (dword)IRQ_4, 0x08, 0x8e);
-	IDTSetGate(37, (dword)IRQ_5, 0x08, 0x8e);
-	IDTSetGate(38, (dword)IRQ_6, 0x08, 0x8e);
-	IDTSetGate(39, (dword)IRQ_7, 0x08, 0x8e);
-	IDTSetGate(40, (dword)IRQ_8, 0x08, 0x8e);
-	IDTSetGate(41, (dword)IRQ_9, 0x08, 0x8e);
-	IDTSetGate(42, (dword)IRQ_10, 0x08, 0x8e);
-	IDTSetGate(43, (dword)IRQ_11, 0x08, 0x8e);
-	IDTSetGate(44, (dword)IRQ_12, 0x08, 0x8e);
-	IDTSetGate(45, (dword)IRQ_13, 0x08, 0x8e);
-	IDTSetGate(46, (dword)IRQ_14, 0x08, 0x8e);
-	IDTSetGate(47, (dword)IRQ_15, 0x08, 0x8e);
+	IDTSetGate(32, (dword)IRQ_0);
+	IDTSetGate(33, (dword)IRQ_1);
+	IDTSetGate(34, (dword)IRQ_2);
+	IDTSetGate(35, (dword)IRQ_3);
+	IDTSetGate(36, (dword)IRQ_4);
+	IDTSetGate(37, (dword)IRQ_5);
+	IDTSetGate(38, (dword)IRQ_6);
+	IDTSetGate(39, (dword)IRQ_7);
+	IDTSetGate(40, (dword)IRQ_8);
+	IDTSetGate(41, (dword)IRQ_9);
+	IDTSetGate(42, (dword)IRQ_10);
+	IDTSetGate(43, (dword)IRQ_11);
+	IDTSetGate(44, (dword)IRQ_12);
+	IDTSetGate(45, (dword)IRQ_13);
+	IDTSetGate(46, (dword)IRQ_14);
+	IDTSetGate(47, (dword)IRQ_15);
 }
 
 void HandleIRQ(struct Regs *r)

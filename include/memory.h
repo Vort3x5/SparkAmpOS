@@ -10,15 +10,6 @@ struct MemMapEntry
 	u32 acpi;
 }__attribute__((packed));
 
-#ifndef MEM_DEF
-
-extern u32 mmap_size;
-extern struct MemMapEntry *mmap;
-extern u64 curr_addr;
-extern u64 curr_entry;
-
-#endif
-
 void Memset(void *src, s32 value, s32 size);
 
 void InitDMem();

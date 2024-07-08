@@ -10,6 +10,9 @@ HDA hda_sc[10];
 u32 hda_sc_ptr;
 u32 selected_hda;
 
+static u32 corb_base;
+static u32 rirb_base;
+
 void HDAReset()
 {
 	u32 base = hda_sc[hda_sc_ptr].base;
@@ -28,17 +31,21 @@ void HDAInit()
 
 	MMOutL(hda_base + HDA_REG_INTCNTL, 0);
 
-	u32 corb_base = (u32) Malloc(HDA_REG_CORBSIZE * (sizeof(u32)));
+	corb_base = Malloc(HDA_REG_CORBSIZE * (sizeof(u32)));
 	MMOutL(hda_base + HDA_REG_CORBLBASE, (u32)(corb_base & 0xffffffff));
 	MMOutL(hda_base + HDA_REG_CORBUBASE, (u32)((corb_base >> 32) & 0xffffffff));
 	MMOutB(hda_base + HDA_REG_CORBSIZE, 0x02);
 	MMOutB(hda_base + HDA_REG_CORBCTL, 0x02);
+	Print("CORB base address: ", WHITE);
+	PrintNum(corb_base, GREEN);
 
-	u32 rirb_base = (u32) Malloc(HDA_REG_RIRBSIZE * (sizeof(u32)));
+	rirb_base = Malloc(HDA_REG_RIRBSIZE * (sizeof(u32)));
 	MMOutL(hda_base + HDA_REG_RIRBLBASE, (u32)(rirb_base & 0xffffffff));
 	MMOutL(hda_base + HDA_REG_RIRBUBASE, (u32)((rirb_base >> 32) & 0xffffffff));
 	MMOutB(hda_base + HDA_REG_RIRBSIZE, 0x02);
 	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x02);
+	Print("RIRB base address: ", WHITE);
+	PrintNum(rirb_base, GREEN);
 
 	MMOutW(hda_base + HDA_REG_RIRBWP, 0xffff);
 
@@ -54,10 +61,6 @@ void HDASendCommand(u32 command)
 	corb_wp = (corb_wp + 1) % HDA_REG_CORBSIZE;
 	MMOutW(hda_base + HDA_REG_CORBWP, corb_wp);
 
-	u32 corb_base = 
-		MMInL(hda_base + HDA_REG_CORBLBASE) 
-		| ((u32) MMInL(hda_base + HDA_REG_CORBUBASE) << 32);
-
 	((u32 *)corb_base)[corb_wp] = command;
 
 	MMOutB(hda_base + HDA_REG_CORBCTL, MMInB(hda_base + HDA_REG_CORBCTL) | 0x01);
@@ -69,10 +72,6 @@ u32 HDAReadResponse()
 
 	while (!(MMInB(hda_base + HDA_REG_RIRBSTS) & 0x01));
 	u16 rirb_wp = MMInW(hda_base + HDA_REG_RIRBWP);
-
-	u32 rirb_base = 
-		MMInL(hda_base + HDA_REG_RIRBLBASE) 
-		| ((u32) MMInL(hda_base + HDA_REG_RIRBUBASE) << 32);
 
 	u32 response = ((u32 *)rirb_base)[rirb_wp];
 	rirb_wp = (rirb_wp + 1) % HDA_REG_RIRBSIZE;
@@ -95,6 +94,9 @@ void HDAIdentifyCodecs()
 	u32 hda_base = hda_sc[hda_sc_ptr].base;
 	MMOutL(hda_base + HDA_REG_WAKEEN, HDA_REG_WAKEEN_ENABLE);
 	u16 statests = MMInW(hda_base + HDA_REG_STATESTS);
+
+	Print("statests register value (number of avaliable codecs): ", WHITE);
+	PrintNum(statests, BLUE);
 
 	for (s32 i = 0; i < 15; ++i)
 		if (statests & (1 << i))
@@ -126,7 +128,7 @@ void HDAConfigOutStream(u32 buff_addr, u32 buff_size)
 void LoadAudioData(u32 audio_buff)
 {
 	for (s32 i = 0; i < AUDIO_SAMPLE_SIZE; ++i)
-		((u8 *)audio_buff)[i]= (i % 256) - 128;
+		((u8 *)audio_buff)[i] = (i % 256) - 128;
 }
 
 void StartAudioPlayback()

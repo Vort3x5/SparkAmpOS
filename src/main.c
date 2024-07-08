@@ -1,6 +1,7 @@
 #include <stdtypes.h>
 #include <video.h>
 #include <interrupts.h>
+#include <clock.h>
 #include <memory.h>
 #include <pci.h>
 #include <hda.h>
@@ -15,28 +16,35 @@ void Main()
 
 	Print("Start!\n", WHITE);
 
-	/*
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
 	__asm__("sti");
-	*/
+
+	InstallTimer();
+	Sleep(3000);
 
 	InitDMem();
 
 	ScanPCI();
 
-	HDAInit();
-	HDAIdentifyCodecs();
-	HDAConfigCodec();
+    HDAInit();
+    HDAIdentifyCodecs();
+    HDAConfigCodec();
 
-	u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
-	LoadAudioData(audio_buff);
-	HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
-	StartAudioPlayback();
+	// __asm__("cli");
+	HDACodecCommand(0xf00, 4);
+	u32 response = HDAReadResponse();
+	PrintNum(response, GREEN);
+
+
+    u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
+    LoadAudioData(audio_buff);
+    HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
+    StartAudioPlayback();
 	// while (1);
-	__asm__("cli");
-	__asm__("hlt");
+	// __asm__("cli");
+	// __asm__("hlt");
 
 	Print("Finish!", WHITE);
 }

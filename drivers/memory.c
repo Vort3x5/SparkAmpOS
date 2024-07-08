@@ -4,10 +4,10 @@
 #include <stdtypes.h>
 #include <video.h>
 
-u32 mmap_size;
-struct MemMapEntry *mmap;
-u64 curr_addr;
-u64 curr_entry = 0;
+static u32 mmap_size;
+static struct MemMapEntry *mmap;
+static u64 curr_addr;
+static u64 curr_entry = 0;
 
 void Memset(void *src, s32 value, s32 size)
 {

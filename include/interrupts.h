@@ -2,7 +2,8 @@
 
 #include <stdtypes.h>
 
-// TODO: implementation in asm instead
+#define GDT_CODE_SEGMENT 0x08
+
 struct IDT_Entry
 {
 	word base_lo;
@@ -20,52 +21,44 @@ struct IDT_Ptr
 
 extern void _IDTLoad();
 
-void IDTSetGate(byte index, dword base, word sel, byte flags);
+void IDTSetGate(byte index, dword base);
 void IDTInstall();
 
-struct Regs
-{
-	u32 gs, fs, es, ds;
-	u32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
-	u32 int_no, err_code;
-	u32 eip, cs, eflags, useresp, ss;
-};
-
-extern void ISR_0(struct Regs *);
-extern void ISR_1(struct Regs *);
-extern void ISR_2(struct Regs *);
-extern void ISR_3(struct Regs *);
-extern void ISR_4(struct Regs *);
-extern void ISR_5(struct Regs *);
-extern void ISR_6(struct Regs *);
-extern void ISR_7(struct Regs *);
-extern void ISR_8(struct Regs *);
-extern void ISR_9(struct Regs *);
-extern void ISR_10(struct Regs *);
-extern void ISR_11(struct Regs *);
-extern void ISR_12(struct Regs *);
-extern void ISR_13(struct Regs *);
-extern void ISR_14(struct Regs *);
-extern void ISR_15(struct Regs *);
-extern void ISR_16(struct Regs *);
-extern void ISR_17(struct Regs *);
-extern void ISR_18(struct Regs *);
-extern void ISR_19(struct Regs *);
-extern void ISR_20(struct Regs *);
-extern void ISR_21(struct Regs *);
-extern void ISR_22(struct Regs *);
-extern void ISR_23(struct Regs *);
-extern void ISR_24(struct Regs *);
-extern void ISR_25(struct Regs *);
-extern void ISR_26(struct Regs *);
-extern void ISR_27(struct Regs *);
-extern void ISR_28(struct Regs *);
-extern void ISR_29(struct Regs *);
-extern void ISR_30(struct Regs *);
-extern void ISR_31(struct Regs *);
+extern void ISR_0();
+extern void ISR_1();
+extern void ISR_2();
+extern void ISR_3();
+extern void ISR_4();
+extern void ISR_5();
+extern void ISR_6();
+extern void ISR_7();
+extern void ISR_8();
+extern void ISR_9();
+extern void ISR_10();
+extern void ISR_11();
+extern void ISR_12();
+extern void ISR_13();
+extern void ISR_14();
+extern void ISR_15();
+extern void ISR_16();
+extern void ISR_17();
+extern void ISR_18();
+extern void ISR_19();
+extern void ISR_20();
+extern void ISR_21();
+extern void ISR_22();
+extern void ISR_23();
+extern void ISR_24();
+extern void ISR_25();
+extern void ISR_26();
+extern void ISR_27();
+extern void ISR_28();
+extern void ISR_29();
+extern void ISR_30();
+extern void ISR_31();
 
 void ISRsInstall();
-void FaultHandler(struct Regs *reg);
+void FaultHandler();
 
 extern void IRQ_0();
 extern void IRQ_1();
@@ -84,7 +77,7 @@ extern void IRQ_13();
 extern void IRQ_14();
 extern void IRQ_15();
  
-void InstallIRQHandler(s32 irq, void (*handler)(struct Regs *r));
+void InstallIRQHandler(s32 irq, void *handler);
 void UninstallIRQHandler(s32 irq);
 void RemapIRQ(void);
 void IRQsInstall();

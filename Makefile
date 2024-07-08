@@ -1,8 +1,8 @@
 ASM := fasm
 CC := i686-elf-gcc
 LD := i686-elf-ld
-CFLAGS := -O2 -std=gnu99 -g -nostdlib -ffreestanding -Wno-shift-count-overflow -I include/
-# CFLAGS := -O2 -std=gnu99 -nostdlib -ffreestanding -Wno-shift-count-overflow -I include/
+# CFLAGS := -O2 -std=gnu99 -g -nostdlib -ffreestanding -Wno-shift-count-overflow -I include/
+CFLAGS := -O2 -std=gnu99 -nostdlib -ffreestanding -Wno-shift-count-overflow -I include/
 
 C_SRCS := $(wildcard src/*.c drivers/*.c)
 ASM_SRCS := $(wildcard init/*.asm)
@@ -73,10 +73,12 @@ clean:
 # sudo chown <username> $(DRIVE)
 release:
 	qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE)
+	# qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -cdrom iso/boot.iso
 
 # bochs -f .bochsrc
 debug:
 	qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE) -s -S &
 	gdb -x scripts/db_input.gdb
+	# qemu-system-i386 -cdrom iso/boot.iso
 
 .PHONY: GRUB clean release debug

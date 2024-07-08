@@ -4,7 +4,7 @@
 #include <interrupts.h>
 #include <io.h>
 
-u32 timer_ticks = 0;
+static u32 timer_ticks = 0;
 
 void TimerPhase(s32 hz)
 {
@@ -14,7 +14,6 @@ void TimerPhase(s32 hz)
 	OutB(0x40, divisor >> 8);
 }
 
-// void HandleTimer(struct Regs *r)
 void HandleTimer()
 {
 	++timer_ticks;
