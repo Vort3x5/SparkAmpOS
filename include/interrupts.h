@@ -4,6 +4,12 @@
 
 #define GDT_CODE_SEGMENT 0x08
 
+#ifndef IRQ_DEF
+
+extern s32 curr_irq_slot;
+
+#endif
+
 struct IDT_Entry
 {
 	word base_lo;
@@ -19,6 +25,7 @@ struct IDT_Ptr
 	dword base;
 } __attribute__((packed));
 
+extern void _Halt();
 extern void _IDTLoad();
 
 void IDTSetGate(byte index, dword base);
@@ -58,7 +65,7 @@ extern void ISR_30();
 extern void ISR_31();
 
 void ISRsInstall();
-void FaultHandler();
+void FaultHandler(s32 int_num);
 
 extern void IRQ_0();
 extern void IRQ_1();
@@ -77,8 +84,9 @@ extern void IRQ_13();
 extern void IRQ_14();
 extern void IRQ_15();
  
-void InstallIRQHandler(s32 irq, void *handler);
+void InstallIRQHandler(void *handler);
 void UninstallIRQHandler(s32 irq);
-void RemapIRQ(void);
+void OutOfIRQSlots();
+void RemapIRQ();
 void IRQsInstall();
-void HandleIRQ(struct Regs *r);
+void HandleIRQ(s32 int_num);

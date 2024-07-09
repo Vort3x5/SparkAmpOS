@@ -1,5 +1,7 @@
 ; asmsyntax=fasm
 
+extrn HandleIRQ
+
 macro IRQ num
 {
 	public IRQ_#num
@@ -7,7 +9,7 @@ macro IRQ num
 		cli
 		push 0
 		push num + 32
-		jmp IRQCommonStub
+		call HandleIRQ
 }
 
 IRQ 0
@@ -41,29 +43,3 @@ IRQ 13
 IRQ 14
 
 IRQ 15
-
-extrn HandleIRQ
-
-IRQCommonStub:
-	pusha
-	push ds
-	push es
-	push fs
-	push gs
-	mov ax, 10h
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov eax, esp
-	push eax
-	mov eax, HandleIRQ
-	call eax
-	pop eax
-	pop gs
-	pop fs
-	pop es
-	pop ds
-	popa
-	add esp, 8
-	iret

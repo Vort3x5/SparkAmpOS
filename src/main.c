@@ -24,6 +24,9 @@ void Main()
 	InstallTimer();
 	Sleep(3000);
 
+	Print("Finish!", WHITE);
+	__asm__("cli");
+	__asm__("hlt");
 	InitDMem();
 
 	ScanPCI();

@@ -21,7 +21,7 @@ void HandleTimer()
 
 void InstallTimer()
 {
-	InstallIRQHandler(0, HandleTimer);
+	InstallIRQHandler(HandleTimer);
 }
 
 void Sleep(s32 ticks)

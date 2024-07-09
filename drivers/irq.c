@@ -1,5 +1,10 @@
+#define IRQ_DEF
+
 #include <interrupts.h>
 #include <io.h>
+#include <video.h>
+
+s32 curr_irq_slot = 0;
 
 void *irq_routines[16] = 
 {
@@ -7,14 +12,39 @@ void *irq_routines[16] =
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void InstallIRQHandler(s32 irq, void *handler)
+void InstallIRQHandler(void *handler)
 {
-	irq_routines[irq] = handler;
+	if (curr_irq_slot < 16)
+		irq_routines[curr_irq_slot] = handler;
+	else
+		OutOfIRQSlots();
+
+	++curr_irq_slot;
+	if (!irq_routines[curr_irq_slot])
+		return;
+
+    for (s32 i = 0; i < 16; ++i)
+	{
+		if (!irq_routines[i])
+		{
+			curr_irq_slot = i;
+			break;
+		}
+	}
+	if (irq_routines[curr_irq_slot])
+		OutOfIRQSlots();
+}
+
+void OutOfIRQSlots()
+{
+	Print("ERROR: Out Of IRQ Slots", RED);
+	_Halt();
 }
 
 void UninstallIRQHandler(s32 irq)
 {
 	irq_routines[irq] = 0;
+	curr_irq_slot = irq;
 }
 
 void RemapIRQ(void)
@@ -53,15 +83,15 @@ void IRQsInstall()
 	IDTSetGate(47, (dword)IRQ_15);
 }
 
-void HandleIRQ(struct Regs *r)
+void HandleIRQ(s32 int_num)
 {
-	void (*handler) (struct Regs *r);
+	void (*handler) (s32 int_num);
 
-	handler = irq_routines[r->int_no - 32];
+	handler = irq_routines[int_num - 32];
 	if (handler)
-		handler(r);
+		handler(int_num);
 
-	if (r->int_no >= 40)
+	if (int_num >= 40)
 		OutB(0xA0, 0x20);
 
 	OutB(0x20, 0x20);

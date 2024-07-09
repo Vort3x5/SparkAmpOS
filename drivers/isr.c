@@ -73,9 +73,14 @@ char *exceptions[] =
     "RESERVED"
 };
 
-void FaultHandler()
+void FaultHandler(s32 int_num)
 {
-		Print("Exception. System Halted!\n", RED);
-		__asm__("cli");
-		__asm__("hlt");
+	if (int_num < 32)
+	{
+		Print(exceptions[int_num], RED);
+		Print(" Exception. System Halted!\n", RED);
+	}
+	else
+		Print("Exception Out Of ISR Range. System Halted!\n", RED);
+	_Halt();
 }

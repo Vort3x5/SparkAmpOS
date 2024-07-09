@@ -35,6 +35,11 @@ _IDTLoad:
 	lidt [idtp]
 	ret
 
+public _Halt
+_Halt:
+	cli
+	hlt
+
 include 'isr.inc'
 
 include 'irq.inc'
