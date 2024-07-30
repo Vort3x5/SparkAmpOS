@@ -12,39 +12,14 @@ void *irq_routines[16] =
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void InstallIRQHandler(void *handler)
+void InstallIRQHandler(void *handler, s32 irq_slot)
 {
-	if (curr_irq_slot < 16)
-		irq_routines[curr_irq_slot] = handler;
-	else
-		OutOfIRQSlots();
-
-	++curr_irq_slot;
-	if (!irq_routines[curr_irq_slot])
-		return;
-
-    for (s32 i = 0; i < 16; ++i)
-	{
-		if (!irq_routines[i])
-		{
-			curr_irq_slot = i;
-			break;
-		}
-	}
-	if (irq_routines[curr_irq_slot])
-		OutOfIRQSlots();
+	irq_routines[irq_slot] = handler;
 }
 
-void OutOfIRQSlots()
+void UninstallIRQHandler(s32 irq_slot)
 {
-	Print("ERROR: Out Of IRQ Slots", RED);
-	_Halt();
-}
-
-void UninstallIRQHandler(s32 irq)
-{
-	irq_routines[irq] = 0;
-	curr_irq_slot = irq;
+	irq_routines[irq_slot] = 0;
 }
 
 void RemapIRQ(void)

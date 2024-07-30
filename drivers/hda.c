@@ -1,3 +1,4 @@
+#include "interrupts.h"
 #define HDA_DEF
 #include <hda.h>
 
@@ -71,6 +72,8 @@ u32 HDAReadResponse()
 	u32 hda_base = hda_sc[hda_sc_ptr].base;
 
 	while (!(MMInB(hda_base + HDA_REG_RIRBSTS) & 0x01));
+	Print("response ready", GREEN);
+	_Halt();
 	u16 rirb_wp = MMInW(hda_base + HDA_REG_RIRBWP);
 
 	u32 response = ((u32 *)rirb_base)[rirb_wp];

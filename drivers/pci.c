@@ -3,6 +3,7 @@
 #include <stdtypes.h>
 #include <io.h>
 #include <video.h>
+#include <interrupts.h>
 #include <hda.h>
 
 void ScanPCI()
@@ -32,7 +33,7 @@ void ScanPCI()
 		}
 	}
 	Print("Fatal: HDA not found", RED);
-	__asm__("hlt");
+	_Halt();
 }
 
 void WritePCI(u32 bus, u32 dev, u32 function, u32 offset, u32 val)

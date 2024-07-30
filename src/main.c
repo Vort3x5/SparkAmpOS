@@ -15,19 +15,16 @@ void Main()
 	Clear();
 
 	Print("Start!\n", WHITE);
+	InitDMem();
+	Print("Dynamic Memory Initialized\n", GREEN);
 
 	IDTInstall();
 	ISRsInstall();
+
+	InitTimer(250);
+	Print("Timer Installed!\n", GREEN);
 	IRQsInstall();
 	__asm__("sti");
-
-	InstallTimer();
-	Sleep(3000);
-
-	Print("Finish!", WHITE);
-	__asm__("cli");
-	__asm__("hlt");
-	InitDMem();
 
 	ScanPCI();
 
@@ -35,19 +32,16 @@ void Main()
     HDAIdentifyCodecs();
     HDAConfigCodec();
 
-	// __asm__("cli");
-	HDACodecCommand(0xf00, 4);
+	HDASendCommand(0x000f0004);
+	Print("HDA Command Sent!\n", GREEN);
 	u32 response = HDAReadResponse();
-	PrintNum(response, GREEN);
-
+	_Halt();
 
     u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
     LoadAudioData(audio_buff);
     HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
     StartAudioPlayback();
-	// while (1);
-	// __asm__("cli");
-	// __asm__("hlt");
 
 	Print("Finish!", WHITE);
+	_Halt();
 }

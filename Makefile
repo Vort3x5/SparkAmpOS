@@ -1,8 +1,8 @@
 ASM := fasm
 CC := i686-elf-gcc
 LD := i686-elf-ld
-# CFLAGS := -O2 -std=gnu99 -g -nostdlib -ffreestanding -Wno-shift-count-overflow -I include/
-CFLAGS := -O2 -std=gnu99 -nostdlib -ffreestanding -Wno-shift-count-overflow -I include/
+CFLAGS := -O2 -std=gnu99 -nostdlib -ffreestanding -I include/ \
+		  -Wno-shift-count-overflow -Wno-int-to-pointer-cast
 
 C_SRCS := $(wildcard src/*.c drivers/*.c)
 ASM_SRCS := $(wildcard init/*.asm)

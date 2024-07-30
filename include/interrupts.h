@@ -84,9 +84,8 @@ extern void IRQ_13();
 extern void IRQ_14();
 extern void IRQ_15();
  
-void InstallIRQHandler(void *handler);
+void InstallIRQHandler(void *handler, s32 irq_slot);
 void UninstallIRQHandler(s32 irq);
-void OutOfIRQSlots();
 void RemapIRQ();
 void IRQsInstall();
 void HandleIRQ(s32 int_num);

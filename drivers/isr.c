@@ -70,6 +70,8 @@ char *exceptions[] =
     "RESERVED",
     "RESERVED",
     "RESERVED",
+    "RESERVED",
+    "RESERVED",
     "RESERVED"
 };
 
