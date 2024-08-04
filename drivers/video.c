@@ -40,7 +40,7 @@ void Print(const char *msg, enum Colors color)
 
 void PrintNum(u64 num, enum Colors color)
 {
-	if (!num)
+	if (num == 0)
 	{
 		Print("0\n", color);
 		return;

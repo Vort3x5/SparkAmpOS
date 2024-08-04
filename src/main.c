@@ -20,22 +20,23 @@ void Main()
 
 	IDTInstall();
 	ISRsInstall();
-
-	InitTimer(250);
-	Print("Timer Installed!\n", GREEN);
 	IRQsInstall();
+
+ 	// InitTimer(250);
+	// Print("Timer Installed!\n", GREEN);
 	__asm__("sti");
+	Print("Interrupts Installed\n", GREEN);
 
 	ScanPCI();
 
     HDAInit();
     HDAIdentifyCodecs();
     HDAConfigCodec();
+	_Halt();
 
 	HDASendCommand(0x000f0004);
 	Print("HDA Command Sent!\n", GREEN);
 	u32 response = HDAReadResponse();
-	_Halt();
 
     u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
     LoadAudioData(audio_buff);
