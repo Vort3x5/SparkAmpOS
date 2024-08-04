@@ -13,8 +13,8 @@ void Main()
 		.addr = 0
 	};
 	Clear();
-
 	Print("Start!\n", WHITE);
+
 	InitDMem();
 	Print("Dynamic Memory Initialized\n", GREEN);
 
