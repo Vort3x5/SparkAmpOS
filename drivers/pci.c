@@ -85,7 +85,7 @@ u32 ReadPCI(u32 bus, u32 dev, u32 function, u32 offset)
 
 void HDAFound(u32 bus, u32 dev, u32 function)
 {
-	Print("HDA Found!\n", BLUE);
+	Print("HDA Found!\n", GREEN);
 	if(hda_sc_ptr >= 10)
 		return;
 	hda_sc[hda_sc_ptr].present = true;

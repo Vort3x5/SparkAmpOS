@@ -30,7 +30,6 @@ void Main()
 	ScanPCI();
 
     HDAInit();
-    HDAIdentifyCodecs();
     HDAConfigCodec();
 	_Halt();
 

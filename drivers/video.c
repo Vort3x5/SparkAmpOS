@@ -62,4 +62,7 @@ void PrintNum(u64 num, enum Colors color)
 	msg[len] = '\0';
 	Print(msg, color);
 	PutC('\n', WHITE);
+
+	Free((u64)msg, len + 1);
+	Free((u64)backward, len);
 }

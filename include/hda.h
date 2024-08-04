@@ -81,6 +81,9 @@ extern u32 selected_hda;
 void HDAReset();
 void HDAInit();
 
+void CORBInit();
+void RIRBInit();
+
 void HDASendCommand(u32 command);
 u32 HDAReadResponse();
 

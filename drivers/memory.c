@@ -3,6 +3,7 @@
 
 #include <stdtypes.h>
 #include <video.h>
+#include <interrupts.h>
 
 static u32 mmap_size;
 static struct MemMapEntry *mmap;
@@ -39,13 +40,13 @@ u64 Malloc(u64 len)
 		if (curr_entry >= mmap_size)
 		{
 			Print("ERROR: No Memory Free\n", RED);
-			__asm__("hlt");
+			_Halt();
 		}
 		curr_addr = (mmap[curr_entry].base + len);
 		return mmap[curr_entry].base;
 	}
 	Print("ERROR: No Memory Free\n", RED);
-	__asm__("hlt");
+	_Halt();
 	return 0;
 }
 
@@ -54,6 +55,12 @@ u64 AlignedMalloc(u64 len, u64 alignment)
 	u64 buffer = (u64)Malloc(len + alignment - 1);
 	u64 aligned_addr = ((u64)buffer + alignment - 1) & ~(alignment - 1);
 
-	curr_addr = aligned_addr;
+	curr_addr = aligned_addr + len;
 	return aligned_addr;
+}
+
+void Free(u64 addr, u64 len)
+{
+	Memset((void *)addr, 0, len);
+	curr_addr = addr;
 }
