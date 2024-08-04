@@ -6,6 +6,12 @@
 
 TTY *tty;
 
+void TTYReset()
+{
+	tty->vga_text_buffer = (word *) VGA_ADDR;
+	tty->addr = 0;
+}
+
 void Clear()
 {
 	s32 area = TEXT_MODE_COLS * TEXT_MODE_ROWS;
@@ -13,8 +19,7 @@ void Clear()
 	for (s32 i = 0; i < area; ++i)
 		tty->vga_text_buffer[i] = VgaEntry(0, WHITE);
 
-	tty->vga_text_buffer = (word *) VGA_ADDR;
-	tty->addr = 0;
+	TTYReset();
 }
 
 void PutC(char c, enum Colors color)

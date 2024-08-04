@@ -1,4 +1,3 @@
-#include "interrupts.h"
 #define HDA_DEF
 #include <hda.h>
 

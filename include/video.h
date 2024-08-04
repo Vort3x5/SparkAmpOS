@@ -44,6 +44,7 @@ extern TTY *tty;
 static inline word VgaEntry(byte c, enum Colors color)
 	{ return (word) c | (word) color << 8; }
 
+void TTYReset();
 void Clear();
 void PutC(char c, enum Colors color);
 void Print(const char *msg, enum Colors color);
