@@ -85,7 +85,7 @@ void CORBInit();
 void RIRBInit();
 
 void HDASendCommand(u32 command);
-u32 HDAReadResponse();
+u64 HDAReadResponse();
 
 void HDACodecCommand(u32 verb, u32 payload);
 void HDAIdentifyCodecs();

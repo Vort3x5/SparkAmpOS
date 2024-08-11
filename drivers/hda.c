@@ -13,9 +13,8 @@ u32 selected_hda;
 
 static u32 hda_base;
 
-static u32 corb_base, corb_entries;
-
-static u32 rirb_base;
+static u32 corb_base, corb_entries, rirb_entries;
+static u64 rirb_base;
 
 void HDAInit()
 {
@@ -24,21 +23,14 @@ void HDAInit()
 	MMOutL(hda_base + HDA_REG_INTCNTL, 0);
 
 	CORBInit();
+	PrintSepration();
+	RIRBInit();
 
-	rirb_base = Malloc(HDA_REG_RIRBSIZE * (sizeof(u32)));
-	MMOutL(hda_base + HDA_REG_RIRBLBASE, (u32)(rirb_base & 0xffffffff));
-	MMOutL(hda_base + HDA_REG_RIRBUBASE, (u32)((rirb_base >> 32) & 0xffffffff));
-	MMOutB(hda_base + HDA_REG_RIRBSIZE, 0x02);
-	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x02);
-	Print("RIRB base address: ", WHITE);
-	PrintNum(rirb_base, LIGHT_CYAN);
+	PrintSepration();
+	MMOutW(hda_base + HDA_REG_INTCNTL, 0);
+	Print("HDA Interrupts Disabled\n", GREEN);
 
 	HDAIdentifyCodecs();
-
-	MMOutW(hda_base + HDA_REG_RIRBWP, 0xffff);
-
-	u8 rirbctl_curr_val = MMInB(hda_base + HDA_REG_RIRBCTL);
-	MMOutB(hda_base + HDA_REG_RIRBCTL, rirbctl_curr_val | 1);
 }
 
 void HDAReset()
@@ -83,13 +75,39 @@ void CORBInit()
 	MMOutW(hda_base + HDA_REG_CORBWP, 0);
 	Print("CORB Write Pointer Reset Success!\n", GREEN);
 
-	// MMOutB(hda_base + HDA_REG_CORBCTL, 0x02);
+	MMOutB(hda_base + HDA_REG_CORBCTL, 0x02);
 	Print("CORB base address: ", WHITE);
 	PrintNum(corb_base, LIGHT_CYAN);
 }
 
 void RIRBInit()
 {
+	rirb_base = AlignedMalloc(256 * sizeof(u64), 128);
+	MMOutL(hda_base + HDA_REG_RIRBLBASE, (u64)rirb_base);
+	MMOutL(hda_base + HDA_REG_RIRBUBASE, 0);
+
+	byte rirb_entries_info;
+	if ((MMInB(hda_base + HDA_REG_RIRBSIZE) & 0x40) == 0x40)
+		rirb_entries = 256, rirb_entries_info = 0x2;
+	else if ((MMInB(hda_base + HDA_REG_RIRBSIZE) & 0x20) == 0x20)
+		rirb_entries = 16, rirb_entries_info = 0x1;
+	else if ((MMInB(hda_base + HDA_REG_RIRBSIZE) & 0x10) == 0x10)
+		rirb_entries = 2, rirb_entries_info = 0;
+	else
+	{
+		Print("ERROR: RIRB Not Supported\n", RED);
+		_Halt();
+	}
+	Print("RIRB Entries Number: ", WHITE);
+	PrintNum(rirb_entries, LIGHT_CYAN);
+	MMOutB(hda_base + HDA_REG_RIRBSIZE, rirb_entries_info);
+
+	MMOutW(hda_base + HDA_REG_RIRBWP, 0x8000);
+	Print("RIRB Write Pointer Reset Success!\n", GREEN);
+
+	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x02);
+	Print("RIRB base address: ", WHITE);
+	PrintNum(rirb_base, LIGHT_CYAN);
 }
 
 void HDAIdentifyCodecs()
@@ -116,14 +134,14 @@ void HDASendCommand(u32 command)
 	MMOutB(hda_base + HDA_REG_CORBCTL, MMInB(hda_base + HDA_REG_CORBCTL) | 0x01);
 }
 
-u32 HDAReadResponse()
+u64 HDAReadResponse()
 {
-	while (!(MMInB(hda_base + HDA_REG_RIRBSTS) & 0x01));
-	Print("response ready", GREEN);
-	_Halt();
+	// while (!(MMInB(hda_base + HDA_REG_RIRBSTS) & 0x01));
+	// Print("response ready", GREEN);
+	// _Halt();
 	u16 rirb_wp = MMInW(hda_base + HDA_REG_RIRBWP);
 
-	u32 response = ((u32 *)rirb_base)[rirb_wp];
+	u64 response = ((u64 *)rirb_base)[rirb_wp];
 	rirb_wp = (rirb_wp + 1) % HDA_REG_RIRBSIZE;
 	MMOutW(hda_base + HDA_REG_RIRBWP, rirb_wp);
 	return response;

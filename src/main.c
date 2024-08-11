@@ -11,7 +11,7 @@ void Main()
 	TTYReset();
 
 	Clear();
-	Print("Start!\n", WHITE);
+	Print("Start!\n", BLUE);
 
 	InitDMem();
 	Print("Dynamic Memory Initialized\n", GREEN);
@@ -26,20 +26,23 @@ void Main()
 	Print("Interrupts Installed\n", GREEN);
 
 	ScanPCI();
+	PrintSepration();
 
     HDAInit();
     HDAConfigCodec();
-	_Halt();
 
 	HDASendCommand(0x000f0004);
 	Print("HDA Command Sent!\n", GREEN);
-	u32 response = HDAReadResponse();
+	u64 response = HDAReadResponse();
+	Print("Response: ", WHITE);
+	PrintNum(response, LIGHT_CYAN);
+	_Halt();
 
     u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
     LoadAudioData(audio_buff);
     HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
     StartAudioPlayback();
 
-	Print("Finish!", WHITE);
+	Print("Finish!", BLUE);
 	_Halt();
 }

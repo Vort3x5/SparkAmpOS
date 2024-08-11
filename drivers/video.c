@@ -71,3 +71,9 @@ void PrintNum(u64 num, enum Colors color)
 	Free((u64)msg, len + 1);
 	Free((u64)backward, len);
 }
+
+void PrintSepration()
+{
+	for (s32 i = 0; i < TEXT_MODE_COLS; ++i)
+		PutC('-', DARK_GRAY);
+}
