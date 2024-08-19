@@ -13,14 +13,12 @@ u32 selected_hda;
 
 static u32 hda_base;
 
-static u32 corb_base, corb_entries, rirb_entries;
+static u32 corb_base, corb_entries, rirb_entries, corb_ptr, rirb_ptr;
 static u64 rirb_base;
 
 void HDAInit()
 {
 	HDAReset();
-
-	MMOutL(hda_base + HDA_REG_INTCNTL, 0);
 
 	CORBInit();
 	PrintSepration();
@@ -46,6 +44,8 @@ void HDAReset()
 
 void CORBInit()
 {
+	MMOutB(hda_base + HDA_REG_CORBCTL, 0x0);
+
 	corb_base = AlignedMalloc(256 * sizeof(u32), 128);
 	MMOutL(hda_base + HDA_REG_CORBLBASE, (u32)corb_base);
 	MMOutL(hda_base + HDA_REG_CORBUBASE, 0);
@@ -73,15 +73,18 @@ void CORBInit()
 	Print("CORB Read Pointer Reset Success!\n", GREEN);
 
 	MMOutW(hda_base + HDA_REG_CORBWP, 0);
+	corb_ptr = 1;
 	Print("CORB Write Pointer Reset Success!\n", GREEN);
 
-	MMOutB(hda_base + HDA_REG_CORBCTL, 0x02);
+	MMOutB(hda_base + HDA_REG_CORBCTL, 0x2);
 	Print("CORB base address: ", WHITE);
 	PrintNum(corb_base, LIGHT_CYAN);
 }
 
 void RIRBInit()
 {
+	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x0);
+
 	rirb_base = AlignedMalloc(256 * sizeof(u64), 128);
 	MMOutL(hda_base + HDA_REG_RIRBLBASE, (u64)rirb_base);
 	MMOutL(hda_base + HDA_REG_RIRBUBASE, 0);
@@ -103,9 +106,10 @@ void RIRBInit()
 	MMOutB(hda_base + HDA_REG_RIRBSIZE, rirb_entries_info);
 
 	MMOutW(hda_base + HDA_REG_RIRBWP, 0x8000);
+	rirb_ptr = 1;
 	Print("RIRB Write Pointer Reset Success!\n", GREEN);
 
-	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x02);
+	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x2);
 	Print("RIRB base address: ", WHITE);
 	PrintNum(rirb_base, LIGHT_CYAN);
 }
@@ -122,45 +126,30 @@ void HDAIdentifyCodecs()
 		if (statests & (1 << i))
 			PrintNum(i, LIGHT_CYAN);
 }
-
-void HDASendCommand(u32 command)
+u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
 {
-	u16 corb_wp = MMInW(hda_base + HDA_REG_CORBWP);
-	corb_wp = ((corb_wp + 1) * sizeof(u32)) % HDA_REG_CORBSIZE;
-	MMOutW(hda_base + HDA_REG_CORBWP, corb_wp);
+	u32 msg = ((codec << 28) | (node << 20) | (verb << 8) | (cmd));
+	u32 *corb_mem = (u32 *)corb_base;
 
-	((u32 *)corb_base)[corb_wp] = command;
+	corb_mem[corb_ptr] = msg;
+	MMOutW(hda_base + HDA_REG_CORBWP, corb_ptr);
 
-	MMOutB(hda_base + HDA_REG_CORBCTL, MMInB(hda_base + HDA_REG_CORBCTL) | 0x01);
-}
+	for (s32 i = 0; i < 10; ++i)
+		if (MMInW(hda_base + HDA_REG_RIRBWP) == corb_ptr)
+			break;
 
-u64 HDAReadResponse()
-{
-	// while (!(MMInB(hda_base + HDA_REG_RIRBSTS) & 0x01));
-	// Print("response ready", GREEN);
-	// _Halt();
-	u16 rirb_wp = MMInW(hda_base + HDA_REG_RIRBWP);
-
-	u64 response = ((u64 *)rirb_base)[rirb_wp];
-	rirb_wp = (rirb_wp + 1) % HDA_REG_RIRBSIZE;
-	MMOutW(hda_base + HDA_REG_RIRBWP, rirb_wp);
-	return response;
-}
-
-void HDACodecCommand(u32 verb, u32 payload)
-{
-	u32 cmd = 
-		(HDA_CODEC_ADDRESS << 28) 
-		| (HDA_CODEC_NODE_ID << 20) 
-		| (verb << 8) 
-		| (payload & 0xff);
-	HDASendCommand(cmd);
+	if (MMInW(hda_base + HDA_REG_RIRBWP) != corb_ptr)
+	{
+		Print("ERROR: No Response\n", RED);
+		_Halt();
+	}
+	return 0;
 }
 
 void HDAConfigCodec()
 {
-	HDACodecCommand(0xf00, 0x00);
-	HDACodecCommand(0xf01, 0x00);
+	HDACmdResponse(0, 0xf00, 0, 0);
+	HDACmdResponse(0, 0xf01, 0, 0);
 }
 
 void HDAConfigOutStream(u32 buff_addr, u32 buff_size)

@@ -30,12 +30,7 @@ void Main()
 
     HDAInit();
     HDAConfigCodec();
-
-	HDASendCommand(0x000f0004);
-	Print("HDA Command Sent!\n", GREEN);
-	u64 response = HDAReadResponse();
-	Print("Response: ", WHITE);
-	PrintNum(response, LIGHT_CYAN);
+	PrintSepration();
 	_Halt();
 
     u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
