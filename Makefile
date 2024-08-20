@@ -1,7 +1,7 @@
 ASM := fasm
 CC := i686-elf-gcc
 LD := i686-elf-ld
-CFLAGS := -O2 -g -std=gnu99 -nostdlib -ffreestanding -I include/ \
+CFLAGS := -O2 -std=gnu99 -nostdlib -ffreestanding -I include/ \
 		  -Wno-shift-count-overflow -Wno-int-to-pointer-cast
 
 C_SRCS := $(wildcard src/*.c drivers/*.c)
@@ -42,7 +42,7 @@ kernel_info:
 
 # $(CC) $(CFLAGS) -e _Start -Ttext 0x1000 -o bin/$@ $^
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
-	$(LD) --Ttext 0x100000 -g -s --oformat binary -e _Start -o bin/$@ $(LLD)
+	$(LD) --Ttext 0x100000 -s --oformat binary -e _Start -o bin/$@ $(LLD)
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LLD)
@@ -78,7 +78,7 @@ release:
 # bochs -f .bochsrc
 debug:
 	qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE) -s -S &
-	gdb -x scripts/db_input.gdb bin/SparkAmpOS.bin
+	gdb -x scripts/db_input.gdb
 	# qemu-system-i386 -cdrom iso/boot.iso
 
 .PHONY: GRUB clean release debug

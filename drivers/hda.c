@@ -126,11 +126,14 @@ void HDAIdentifyCodecs()
 		if (statests & (1 << i))
 			PrintNum(i, LIGHT_CYAN);
 }
+
 u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
 {
 	u32 msg = ((codec << 28) | (node << 20) | (verb << 8) | (cmd));
 	u32 *corb_mem = (u32 *)corb_base;
 
+	PrintNum(corb_base, LIGHT_CYAN);
+	PrintNum((u32)&(corb_mem[corb_ptr]), LIGHT_CYAN);
 	corb_mem[corb_ptr] = msg;
 	MMOutW(hda_base + HDA_REG_CORBWP, corb_ptr);
 

@@ -29,7 +29,10 @@ void Main()
 	PrintSepration();
 
     HDAInit();
-    HDAConfigCodec();
+	u64 res = HDACmdResponse(0, 0xf00, 0, 0);
+	Print("Response: ", WHITE);
+	PrintNum(res, LIGHT_CYAN);
+    // HDAConfigCodec();
 	PrintSepration();
 	_Halt();
 
