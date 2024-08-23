@@ -28,19 +28,6 @@ void Main()
 	ScanPCI();
 	PrintSepration();
 
-    HDAInit();
-	u64 res = HDACmdResponse(0, 0xf00, 0, 0);
-	Print("Response: ", WHITE);
-	PrintNum(res, LIGHT_CYAN);
-    // HDAConfigCodec();
-	PrintSepration();
-	_Halt();
-
-    u32 audio_buff = Malloc(AUDIO_SAMPLE_SIZE);
-    LoadAudioData(audio_buff);
-    HDAConfigOutStream(audio_buff, AUDIO_SAMPLE_SIZE);
-    StartAudioPlayback();
-
 	Print("Finish!", BLUE);
 	_Halt();
 }

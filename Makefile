@@ -72,12 +72,12 @@ clean:
 
 # sudo chown <username> $(DRIVE)
 release:
-	qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE)
-	# qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -cdrom iso/boot.iso
+	qemu-system-i386 -audio driver=alsa,model=ac97,id=alsa -hdb $(DRIVE)
+	# qemu-system-i386 -audio driver=alsa,model=ac97,id=alsa -cdrom iso/boot.iso
 
 # bochs -f .bochsrc
 debug:
-	qemu-system-i386 -audio driver=alsa,model=hda,id=alsa -hdb $(DRIVE) -s -S &
+	qemu-system-i386 -audio driver=alsa,model=ac97,id=alsa -hdb $(DRIVE) -s -S &
 	gdb -x scripts/db_input.gdb
 	# qemu-system-i386 -cdrom iso/boot.iso
 

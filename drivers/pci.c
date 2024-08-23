@@ -5,6 +5,7 @@
 #include <video.h>
 #include <interrupts.h>
 #include <hda.h>
+#include <ac97.h>
 
 void ScanPCI()
 {
@@ -13,9 +14,9 @@ void ScanPCI()
 	{
 		for (s32 dev = 0; dev < 32; ++dev)
 		{
-			if (IsHDA(bus, dev, 0))
+			if (PCIIsAC97(bus, dev, 0))
 			{
-				HDAFound(bus, dev, 0);
+				PCIAC97Found(bus, dev, 0);
 				return;
 			}
 
@@ -23,16 +24,16 @@ void ScanPCI()
 			{
 				for (s32 function = 1; function < 8; ++function)
 				{
-					if (IsHDA(bus, dev, function))
+					if (PCIIsAC97(bus, dev, function))
 					{
-						HDAFound(bus, dev, 0);
+						PCIAC97Found(bus, dev, 0);
 						return;
 					}
 				}
 			}
 		}
 	}
-	Print("Fatal: HDA not found", RED);
+	Print("Fatal: AC97 not found", RED);
 	_Halt();
 }
 
@@ -60,18 +61,6 @@ void PCIEnableMMIOBusMastering(u32 bus, u32 dev, u32 function)
 			  & ~(1 << 10)) | (1 << 2) | (1 << 1)));
 }
 
-bool IsHDA(u32 bus, u32 dev, u32 function)
-{
-	u32 id, type;
-
-	id = ReadPCI(bus, dev, function, 0);
-	if (id == 0xffff)
-		return false;
-
-	type = (ReadPCI(bus, dev, function, 0x08) >> 8);
-	return (type == 0x040300);
-}
-
 u32 ReadPCI(u32 bus, u32 dev, u32 function, u32 offset)
 {
 	OutL(CONFIG_ADDR, 
@@ -81,15 +70,4 @@ u32 ReadPCI(u32 bus, u32 dev, u32 function, u32 offset)
 			 | (function << 8) 
 			 | (offset)));
 	return InL(CONFIG_DATA);
-}
-
-void HDAFound(u32 bus, u32 dev, u32 function)
-{
-	Print("HDA Found!\n", GREEN);
-	if(hda_sc_ptr >= 10)
-		return;
-	hda_sc[hda_sc_ptr].present = true;
-	hda_sc[hda_sc_ptr].base = PCIReadMMIOBar(bus, dev, function, PCI_BAR0);
-	hda_sc[hda_sc_ptr].communication = HDA_UNINITIALIZED;
-	PCIEnableMMIOBusMastering(bus, dev, function);
 }

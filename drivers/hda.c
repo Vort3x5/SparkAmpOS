@@ -16,6 +16,29 @@ static u32 hda_base;
 static u32 corb_base, corb_entries, rirb_entries, corb_ptr, rirb_ptr;
 static u64 rirb_base;
 
+bool PCIIsHDA(u32 bus, u32 dev, u32 function)
+{
+	u32 id, type;
+
+	id = ReadPCI(bus, dev, function, 0);
+	if (id == 0xffff)
+		return false;
+
+	type = (ReadPCI(bus, dev, function, 0x08) >> 8);
+	return (type == 0x040300);
+}
+
+void PCIHDAFound(u32 bus, u32 dev, u32 function)
+{
+	Print("HDA Found!\n", GREEN);
+	if(hda_sc_ptr >= 10)
+		return;
+	hda_sc[hda_sc_ptr].present = true;
+	hda_sc[hda_sc_ptr].base = PCIReadMMIOBar(bus, dev, function, PCI_BAR0);
+	hda_sc[hda_sc_ptr].communication = HDA_UNINITIALIZED;
+	PCIEnableMMIOBusMastering(bus, dev, function);
+}
+
 void HDAInit()
 {
 	HDAReset();

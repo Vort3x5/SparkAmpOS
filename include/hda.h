@@ -78,6 +78,9 @@ extern u32 selected_hda;
 
 #endif
 
+bool PCIIsHDA(u32 bus, u32 dev, u32 function);
+void PCIHDAFound(u32 bus, u32 dev, u32 function);
+
 void HDAReset();
 void HDAInit();
 

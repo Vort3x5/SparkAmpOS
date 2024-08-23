@@ -17,6 +17,3 @@ u32 ReadPCI(u32 bus, u32 dev, u32 function, u32 offset);
 void WritePCI(u32 bus, u32 dev, u32 function, u32 offset, u32 val);
 u32 PCIReadMMIOBar(u32 bus, u32 device, u32 function, u32 bar);
 void PCIEnableMMIOBusMastering(u32 bus, u32 dev, u32 function);
-
-bool IsHDA(u32 bus, u32 dev, u32 function);
-void HDAFound(u32 bus, u32 dev, u32 function);
