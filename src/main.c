@@ -4,7 +4,7 @@
 #include <clock.h>
 #include <memory.h>
 #include <pci.h>
-#include <hda.h>
+#include <ac97.h>
 
 void Main() 
 {
@@ -26,6 +26,10 @@ void Main()
 	Print("Interrupts Installed\n", GREEN);
 
 	ScanPCI();
+	PrintSepration();
+
+	AC97Init();
+	Print("AC97 Sound Card Initialized\n", GREEN);
 	PrintSepration();
 
 	Print("Finish!", BLUE);
