@@ -46,3 +46,7 @@ void AC97Init()
 
 	MMOutW(nam_base + MIXER_PCM_OUT_VOL, 0);
 }
+
+void FillBDL()
+{
+}

@@ -17,11 +17,22 @@
 #define MIXER_PCM_LFE_DAC            0x30
 #define MIXER_PCM_LR_ADC             0x32
 
-#define BUS_REG_PCM_IN   0x00
-#define BUS_REG_PCM_OUT  0x10
-#define BUS_REG_MIC      0x20
-#define BUS_REG_GCTLR    0x2c
-#define BUS_REG_GSTS     0x30
+#define BUS_ADDR_OF_BDL                      0x00
+#define BUS_NUM_OF_PROCESSED_BD_ENTRY        0x04
+#define BUS_NUM_OF_BD_ENTRIES                0x05
+#define BUS_STS_OF_DATA_TRANSFER             0x06
+#define BUS_NUM_OF_TRANSFERRED_SAMPLES       0x08
+#define BUS_NUM_OF_NEXT_PROCESSED_BDL_ENTRY  0x0a
+#define BUS_TRANSFER_CTRL                    0x0b
+#define BUS_REG_MIC                          0x20
+#define BUS_REG_GCTLR                        0x2c
+#define BUS_REG_GSTS                         0x30
+
+struct BDL_Entry
+{
+	u32 addr;
+	u16 num_of_samples, flags;
+}__attribute__((packed));
 
 static u64 nam_base, nabm_base;
 static u8 channel_capabilities, sample_capabilities;
@@ -31,3 +42,4 @@ bool PCIIsAC97(u32 bus, u32 dev, u32 function);
 void PCIAC97Found(u32 bus, u32 dev, u32 function);
 
 void AC97Init();
+void FillBDL();
