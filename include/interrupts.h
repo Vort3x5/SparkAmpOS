@@ -4,9 +4,9 @@
 
 #define GDT_CODE_SEGMENT 0x08
 
-#ifndef IRQ_DEF
+#ifdef IRQ_DEF
 
-extern s32 curr_irq_slot;
+static s32 curr_irq_slot = 0;
 
 #endif
 

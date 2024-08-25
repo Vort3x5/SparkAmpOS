@@ -7,15 +7,6 @@
 #include <video.h>
 #include <interrupts.h>
 
-HDA hda_sc[10];
-u32 hda_sc_ptr;
-u32 selected_hda;
-
-static u32 hda_base;
-
-static u32 corb_base, corb_entries, rirb_entries, corb_ptr, rirb_ptr;
-static u64 rirb_base;
-
 bool PCIIsHDA(u32 bus, u32 dev, u32 function)
 {
 	u32 id, type;

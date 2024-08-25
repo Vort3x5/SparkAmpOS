@@ -34,9 +34,13 @@ struct BDL_Entry
 	u16 num_of_samples, flags;
 }__attribute__((packed));
 
+#ifdef AC97_DEF
+
 static u64 nam_base, nabm_base;
 static u8 channel_capabilities, sample_capabilities;
 static bool ext_capabilities;
+
+#endif
 
 bool PCIIsAC97(u32 bus, u32 dev, u32 function);
 void PCIAC97Found(u32 bus, u32 dev, u32 function);

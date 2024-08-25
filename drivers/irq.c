@@ -4,8 +4,6 @@
 #include <io.h>
 #include <video.h>
 
-s32 curr_irq_slot = 0;
-
 void *irq_routines[16] = 
 {
 	0, 0, 0, 0, 0, 0, 0, 0,

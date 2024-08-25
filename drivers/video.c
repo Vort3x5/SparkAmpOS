@@ -4,8 +4,6 @@
 #include <stdtypes.h>
 #include <memory.h>
 
-TTY *tty;
-
 void TTYReset()
 {
 	tty->vga_text_buffer = (word *) VGA_ADDR;

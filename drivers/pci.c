@@ -9,7 +9,7 @@
 
 void ScanPCI()
 {
-	hda_sc_ptr = 0;
+	// hda_sc_ptr = 0;
 	for (s32 bus = 0; bus < 256; ++bus)
 	{
 		for (s32 dev = 0; dev < 32; ++dev)

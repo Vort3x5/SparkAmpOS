@@ -35,9 +35,9 @@ typedef struct {
 	u32 addr;
 } TTY;
 
-#ifndef TTY_DEF
+#ifdef TTY_DEF
 
-extern TTY *tty;
+static TTY *tty;
 
 #endif
 

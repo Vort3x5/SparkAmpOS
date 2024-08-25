@@ -1,10 +1,8 @@
-#define TIMER_DEF
+#define CLOCK_DEF
 #include <clock.h>
 
 #include <interrupts.h>
 #include <io.h>
-
-u32 timer_ticks = 0;
 
 void HandleTimer()
 {

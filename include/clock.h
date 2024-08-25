@@ -3,9 +3,9 @@
 #include <stdtypes.h>
 #include <interrupts.h>
 
-#ifndef TTY_DEF
+#ifdef CLOCK_DEF
 
-extern u32 timer_ticks;
+static u32 timer_ticks = 0;
 
 #endif
 

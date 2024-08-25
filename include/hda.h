@@ -70,11 +70,15 @@ typedef struct {
 	u32 output_amp_node_capabilites;
 } HDA;
 
-#ifndef HDA_DEF
+#ifdef HDA_DEF
 
-extern HDA hda_sc[10];
-extern u32 hda_sc_ptr;
-extern u32 selected_hda;
+static HDA hda_sc[10];
+static u32 hda_sc_ptr;
+static u32 selected_hda;
+
+static u32 hda_base;
+static u32 corb_base, corb_entries, rirb_entries, corb_ptr, rirb_ptr;
+static u64 rirb_base;
 
 #endif
 

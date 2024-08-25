@@ -1,3 +1,4 @@
+#define AC97_DEF
 #include <ac97.h>
 
 #include <video.h>
