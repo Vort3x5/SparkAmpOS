@@ -4,6 +4,11 @@
 #include <video.h>
 #include <pci.h>
 #include <io.h>
+#include <memory.h>
+#include <interrupts.h>
+#include <video.h>
+
+#include <demo.h>
 
 bool PCIIsAC97(u32 bus, u32 dev, u32 function)
 {
@@ -45,9 +50,39 @@ void AC97Init()
 	Print("Headphone output boolean value: ", WHITE);
 	PrintNum(ext_capabilities, LIGHT_CYAN);
 
+	bdl_ptr = 
+		(struct BDL_Entry *)AlignedMalloc(sizeof (struct BDL_Entry) * 32, 0x10);
+
 	MMOutW(nam_base + MIXER_PCM_OUT_VOL, 0);
+}
+
+void AC97Play()
+{
+	MMOutW(nam_base + MIXER_MASTER_OUT_VOL, 0);
+
+	FillBDL();
+
+	MMOutB(nabm_base + BUS_REG_RESET, 0x02);
+	while((MMInB(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
+		asm("nop");
+
+	MMOutL(nabm_base + BUS_PCM_OUT_BOX + BUS_ADDR_OF_BDL, (u32)bdl_ptr);
+	MMOutB(nabm_base + BUS_PCM_OUT_BOX + BUS_NUM_OF_BD_ENTRIES, 1);
+
+	MMOutB(nabm_base + BUS_REG_RESET, 0x01);
+}
+
+void SetSampleRate(u16 sample_rate)
+{
 }
 
 void FillBDL()
 {
+	bdl_ptr[curr_entry].addr = (u32)audio_buffer;
+	bdl_ptr[curr_entry].num_of_samples = BUFFER_SIZE;
+	bdl_ptr[curr_entry].reserved = 0;
+	bdl_ptr[curr_entry].last_buffer_entry = 0;
+	bdl_ptr[curr_entry].int_on_completion = 0;
+
+	curr_entry = (curr_entry + 1) & (NUM_OF_BDL_ENTRIES - 1);
 }

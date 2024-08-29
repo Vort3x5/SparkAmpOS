@@ -6,6 +6,8 @@
 #include <pci.h>
 #include <ac97.h>
 
+#include <demo.h>
+
 void Main() 
 {
 	TTYReset();
@@ -31,6 +33,9 @@ void Main()
 	AC97Init();
 	Print("AC97 Sound Card Initialized\n", GREEN);
 	PrintSepration();
+
+	GenerateSineWave();
+	AC97Play();
 
 	Print("Finish!", BLUE);
 	_Halt();

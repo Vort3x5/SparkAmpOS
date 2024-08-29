@@ -24,17 +24,28 @@
 #define BUS_NUM_OF_TRANSFERRED_SAMPLES       0x08
 #define BUS_NUM_OF_NEXT_PROCESSED_BDL_ENTRY  0x0a
 #define BUS_TRANSFER_CTRL                    0x0b
+#define BUS_PCM_IN_BOX                       0x00
+#define BUS_PCM_OUT_BOX                      0x10
+#define BUS_REG_RESET                        0x1b
 #define BUS_REG_MIC                          0x20
 #define BUS_REG_GCTLR                        0x2c
 #define BUS_REG_GSTS                         0x30
 
+#define NUM_OF_BDL_ENTRIES 32
+
 struct BDL_Entry
 {
 	u32 addr;
-	u16 num_of_samples, flags;
+	u16 num_of_samples; 
+	u16 reserved: 14;
+	u8 last_buffer_entry: 1;
+	u8 int_on_completion: 1;
 }__attribute__((packed));
 
 #ifdef AC97_DEF
+
+static struct BDL_Entry *bdl_ptr;
+static u32 curr_entry = 0;
 
 static u64 nam_base, nabm_base;
 static u8 channel_capabilities, sample_capabilities;
@@ -46,4 +57,7 @@ bool PCIIsAC97(u32 bus, u32 dev, u32 function);
 void PCIAC97Found(u32 bus, u32 dev, u32 function);
 
 void AC97Init();
+void AC97Play();
+
+void SetSampleRate(u16 sample_rate);
 void FillBDL();
