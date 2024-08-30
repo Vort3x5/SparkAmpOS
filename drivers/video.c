@@ -3,6 +3,7 @@
 
 #include <stdtypes.h>
 #include <memory.h>
+#include <demo.h>
 
 void TTYReset()
 {
@@ -45,7 +46,7 @@ void PrintNum(u64 num, enum Colors color)
 {
 	if (num == 0)
 	{
-		Print("0\n", color);
+		PutC('0', color);
 		return;
 	}
 	u64 buff = num;
@@ -64,7 +65,6 @@ void PrintNum(u64 num, enum Colors color)
 		msg[i] = backward[j];
 	msg[len] = '\0';
 	Print(msg, color);
-	PutC('\n', WHITE);
 
 	Free((u64)msg, len + 1);
 	Free((u64)backward, len);

@@ -25,3 +25,5 @@ void InitDMem();
 u64 Malloc(u64 len);
 u64 AlignedMalloc(u64 len, u64 alignment);
 void Free(u64 addr, u64 len);
+
+void MemDump();

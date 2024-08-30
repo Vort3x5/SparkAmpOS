@@ -18,6 +18,11 @@ void Main()
 	InitDMem();
 	Print("Dynamic Memory Initialized\n", GREEN);
 
+	s32 x = 54;
+	PrintNum(x, LIGHT_CYAN);
+
+	MemDump();
+
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();

@@ -59,3 +59,20 @@ void Free(u64 addr, u64 len)
 	Memset((void *)addr, 0, len);
 	curr_addr = addr;
 }
+
+void MemDump()
+{
+	Print("Num of entries: ", WHITE);
+	PrintNum(mmap_size, LIGHT_CYAN);
+	PutC('\n', WHITE);
+	Print("(Base | Len | Type): ", WHITE);
+	for (s32 i = 0; i < mmap_size; ++i)
+	{
+		PrintNum(mmap[i].base, LIGHT_CYAN);
+		Print(" | ", WHITE);
+		PrintNum(mmap[i].len, LIGHT_CYAN);
+		Print(" | ", WHITE);
+		PrintNum(mmap[i].type, LIGHT_CYAN);
+		PutC('\n', WHITE);
+	}
+}

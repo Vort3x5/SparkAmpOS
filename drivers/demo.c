@@ -13,6 +13,7 @@ void GenerateSineWave()
 {
 	audio_buffer = (s16 *)Malloc(sizeof(s16) * 80);
 	PrintNum((u64)audio_buffer, LIGHT_CYAN);
+	PutC('\n', WHITE);
 	for (s32 i = 0; i < 80; ++i)
 	{
 		f64 t = (f64)i / SAMPLE_RATE;

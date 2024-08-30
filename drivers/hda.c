@@ -78,6 +78,7 @@ void CORBInit()
 	}
 	Print("CORB Entries Number: ", WHITE);
 	PrintNum(corb_entries, LIGHT_CYAN);
+	PutC('\n', WHITE);
 	MMOutB(hda_base + HDA_REG_CORBSIZE, corb_entries_info);
 
 	MMOutW(hda_base + HDA_REG_CORBRP, 0x8000);
@@ -93,6 +94,7 @@ void CORBInit()
 	MMOutB(hda_base + HDA_REG_CORBCTL, 0x2);
 	Print("CORB base address: ", WHITE);
 	PrintNum(corb_base, LIGHT_CYAN);
+	PutC('\n', WHITE);
 }
 
 void RIRBInit()
@@ -117,6 +119,7 @@ void RIRBInit()
 	}
 	Print("RIRB Entries Number: ", WHITE);
 	PrintNum(rirb_entries, LIGHT_CYAN);
+	PutC('\n', WHITE);
 	MMOutB(hda_base + HDA_REG_RIRBSIZE, rirb_entries_info);
 
 	MMOutW(hda_base + HDA_REG_RIRBWP, 0x8000);
@@ -126,6 +129,7 @@ void RIRBInit()
 	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x2);
 	Print("RIRB base address: ", WHITE);
 	PrintNum(rirb_base, LIGHT_CYAN);
+	PutC('\n', WHITE);
 }
 
 void HDAIdentifyCodecs()
@@ -135,10 +139,16 @@ void HDAIdentifyCodecs()
 
 	Print("statests register value (number of avaliable codecs): ", WHITE);
 	PrintNum(statests, LIGHT_CYAN);
+	PutC('\n', WHITE);
 
 	for (s32 i = 0; i < 15; ++i)
+	{
 		if (statests & (1 << i))
+		{
 			PrintNum(i, LIGHT_CYAN);
+			PutC('\n', WHITE);
+		}
+	}
 }
 
 u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
@@ -147,7 +157,9 @@ u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
 	u32 *corb_mem = (u32 *)corb_base;
 
 	PrintNum(corb_base, LIGHT_CYAN);
+	PutC('\n', WHITE);
 	PrintNum((u32)&(corb_mem[corb_ptr]), LIGHT_CYAN);
+	PutC('\n', WHITE);
 	corb_mem[corb_ptr] = msg;
 	MMOutW(hda_base + HDA_REG_CORBWP, corb_ptr);
 
