@@ -18,11 +18,6 @@ void Main()
 	InitDMem();
 	Print("Dynamic Memory Initialized\n", GREEN);
 
-	s32 x = 54;
-	PrintNum(x, LIGHT_CYAN);
-
-	MemDump();
-
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
@@ -36,10 +31,15 @@ void Main()
 	PrintSepration();
 
 	AC97Init();
+
 	Print("AC97 Sound Card Initialized\n", GREEN);
 	PrintSepration();
 
+	MemDump();
+	PrintSepration();
+
 	GenerateSineWave();
+	Brk();
 	AC97Play();
 
 	Print("Finish!", BLUE);

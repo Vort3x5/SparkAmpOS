@@ -11,16 +11,15 @@ s16 *audio_buffer;
 
 void GenerateSineWave()
 {
-	audio_buffer = (s16 *)Malloc(sizeof(s16) * 80);
+	audio_buffer = (s16 *)Malloc(sizeof(s16) * BUFFER_SIZE);
 	PrintNum((u64)audio_buffer, LIGHT_CYAN);
 	PutC('\n', WHITE);
-	for (s32 i = 0; i < 80; ++i)
+	for (s32 i = 0; i < BUFFER_SIZE; ++i)
 	{
 		f64 t = (f64)i / SAMPLE_RATE;
 		f64 sample = AMPLITUDE * Sin(2.0 * PI * FREQUENCY * t);
 		audio_buffer[i] = (s16)sample;
 	}
-	Brk();
 }
 
 void Brk()

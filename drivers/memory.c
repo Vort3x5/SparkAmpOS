@@ -71,6 +71,7 @@ void MemDump()
 	PrintNum(mmap_size, LIGHT_CYAN);
 	PutC('\n', WHITE);
 	Print("(Base | Len | Type): ", WHITE);
+	PutC('\n', WHITE);
 	for (s32 i = 0; i < mmap_size; ++i)
 	{
 		PrintNum(mmap[i].base, LIGHT_CYAN);
