@@ -33,6 +33,8 @@ GRUB: dirs SparkAmpOS
 	cp bin/SparkAmpOS iso/boot/boot.iso
 	./scripts/grub.sh
 	grub-mkrescue -o iso/boot.iso iso
+	qemu-system-i386 -audio driver=alsa,model=ac97,id=alsa -cdrom iso/boot.iso -s -S &
+	gdb -x scripts/db_grub.gdb
 
 bin/%.bin: boot/src/%.asm
 	$(ASM) $< $@
