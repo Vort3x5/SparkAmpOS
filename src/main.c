@@ -22,12 +22,6 @@ void Main()
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
-
-	KbHandlerInstall();
-	Print("Keyboard Drivers Initialized\n", GREEN);
-
- 	// InitTimer(250);
-	// Print("Timer Installed!\n", GREEN);
 	__asm__("sti");
 	Print("Interrupts Installed\n", GREEN);
 
@@ -41,10 +35,10 @@ void Main()
 
 	// MemDump();
 	// PrintSepration();
-
-	Brk();
 	GenerateSineWave();
 	AC97Play();
+
+	Brk();
 
 	Print("Finish!", BLUE);
 	_Halt();

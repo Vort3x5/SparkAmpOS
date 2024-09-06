@@ -55,6 +55,9 @@ void AC97Init()
 
 	bdl_ptr = 
 		(struct BDL_Entry *)AlignedMalloc(sizeof (struct BDL_Entry) * 32, 0x10);
+	Print("BDL address: ", WHITE);
+	PrintNum((u64)bdl_ptr, LIGHT_CYAN);
+	PutC('\n', WHITE);
 
 	MMOutW(nam_base + MIXER_PCM_OUT_VOL, 0);
 }

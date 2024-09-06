@@ -23,5 +23,6 @@ void Sleep(s32 ticks)
 {
 	u32 eticks = timer_ticks + ticks;
 
-	while (timer_ticks < eticks);
+	while (timer_ticks < eticks)
+		__asm__("nop");
 }

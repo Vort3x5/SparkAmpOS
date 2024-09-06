@@ -75,3 +75,33 @@ void PrintSepration()
 	for (s32 i = 0; i < TEXT_MODE_COLS; ++i)
 		PutC('-', DARK_GRAY);
 }
+
+void PrintIter(u64 num, enum Colors color)
+{
+	PrintNum(num, color);
+	if (num == 0)
+	{
+		--(tty->addr);
+		return;
+	}
+	u8 res;
+	for (res = 0; num; num /= 10)
+		++res;
+	tty->addr -= res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

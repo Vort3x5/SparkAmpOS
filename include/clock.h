@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdtypes.h>
-#include <interrupts.h>
 
 #ifdef CLOCK_DEF
 

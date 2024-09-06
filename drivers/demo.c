@@ -19,6 +19,7 @@ void GenerateSineWave()
 		f64 t = (f64)i / SAMPLE_RATE;
 		f64 sample = AMPLITUDE * Sin(2.0 * PI * FREQUENCY * t);
 		audio_buffer[i] = (s16)sample;
+		PrintIter(i, MAGENTA);
 	}
 }
 

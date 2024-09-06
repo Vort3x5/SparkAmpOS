@@ -5,15 +5,17 @@
 #include <interrupts.h>
 #include <io.h>
 #include <video.h>
+#include <demo.h>
 
 void KbHandlerInstall()
 {
 	InstallIRQHandler(KbHandler, 1);
+	k_pressed = false;
 }
 
 void KbHandler()
 {
+	k_pressed = true;
 	byte scancode = InB(0x60);
-	PutC(scancode, MAGENTA);
-	_Halt();
+	PrintNum(scancode, MAGENTA);
 }

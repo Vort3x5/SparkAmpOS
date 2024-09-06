@@ -7,6 +7,13 @@
 #ifdef IRQ_DEF
 
 static s32 curr_irq_slot = 0;
+bool k_pressed = false;
+
+#endif
+
+#ifndef IRQ_DEF
+
+extern bool k_pressed;
 
 #endif
 
