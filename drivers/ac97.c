@@ -68,6 +68,8 @@ void AC97Play()
 
 	FillBDL();
 
+	Brk();
+
 	MMOutB(nabm_base + BUS_REG_RESET, 0x02);
 	while((MMInB(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
 		asm("nop");
