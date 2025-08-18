@@ -89,19 +89,3 @@ void PrintIter(u64 num, enum Colors color)
 		++res;
 	tty->addr -= res;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
