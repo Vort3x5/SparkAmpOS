@@ -33,8 +33,6 @@ void Main()
 	Print("AC97 Sound Card Initialized\n", GREEN);
 	PrintSepration();
 
-	// MemDump();
-	// PrintSepration();
 	GenerateSineWave();
 	AC97Play();
 

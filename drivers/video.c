@@ -7,8 +7,8 @@
 
 void TTYReset()
 {
-	tty->vga_text_buffer = (word *) VGA_ADDR;
-	tty->addr = 0;
+	tty.vga_text_buffer = (word *) VGA_ADDR;
+	tty.addr = 0;
 }
 
 void Clear()
@@ -16,7 +16,7 @@ void Clear()
 	s32 area = TEXT_MODE_COLS * TEXT_MODE_ROWS;
 
 	for (s32 i = 0; i < area; ++i)
-		tty->vga_text_buffer[i] = VgaEntry(0, WHITE);
+		tty.vga_text_buffer[i] = VgaEntry(0, BLACK);
 
 	TTYReset();
 }
@@ -26,12 +26,12 @@ void PutC(char c, enum Colors color)
 	switch(c)
 	{
 		case '\n':
-			tty->addr += TEXT_MODE_COLS - ((tty->addr) % TEXT_MODE_COLS);
+			tty.addr += TEXT_MODE_COLS - ((tty.addr) % TEXT_MODE_COLS);
 			break;
 
 		default:
-			tty->vga_text_buffer[tty->addr] = VgaEntry(c, color);
-			++(tty->addr);
+			tty.vga_text_buffer[tty.addr] = VgaEntry(c, color);
+			++(tty.addr);
 			break;
 	}
 }
@@ -81,11 +81,11 @@ void PrintIter(u64 num, enum Colors color)
 	PrintNum(num, color);
 	if (num == 0)
 	{
-		--(tty->addr);
+		--(tty.addr);
 		return;
 	}
 	u8 res;
 	for (res = 0; num; num /= 10)
 		++res;
-	tty->addr -= res;
+	tty.addr -= res;
 }

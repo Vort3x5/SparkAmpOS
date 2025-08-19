@@ -37,7 +37,7 @@ typedef struct {
 
 #ifdef TTY_DEF
 
-static TTY *tty;
+static TTY tty;
 
 #endif
 

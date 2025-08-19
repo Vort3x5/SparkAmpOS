@@ -4,9 +4,10 @@
 #include <stdtypes.h>
 #include <video.h>
 #include <interrupts.h>
+#include <demo.h>
 
 static u32 mmap_size;
-static struct MemMapEntry *mmap;
+static struct MemMapEntry mmap[32];
 static u64 curr_addr;
 static u64 curr_entry = 0;
 
@@ -21,8 +22,26 @@ void Memset(void *src, s32 value, s32 size)
 void InitDMem()
 {
 	mmap_size = *((u32 *)0x2000);
-	mmap = (struct MemMapEntry *)0x2004;
-	curr_addr = mmap->base;
+	// assigning 0x2004 address to MemMapEntry struct doesn't work with standard gcc 
+	u32 *raw_mem_data = (u32 *)0x2004;
+	for (u32 i = 0; i < mmap_size; ++i)
+	{
+		u32 offset = (i * 6);
+
+		u32 base_low = raw_mem_data[offset];
+		u32 base_high = raw_mem_data[offset + 1];
+		u32 len_low = raw_mem_data[offset + 2];
+		u32 len_high = raw_mem_data[offset + 3];
+		u32 type = raw_mem_data[offset + 4];
+		u32 acpi = raw_mem_data[offset + 5];
+
+		mmap[i] = (struct MemMapEntry) {
+			.base = (u64)(base_high << 32) | base_low,
+			.len = (u64)(len_high << 32) | len_low,
+			.type = type,
+			.acpi = acpi,
+		};
+	}
 }
 
 u64 Malloc(u64 len)
