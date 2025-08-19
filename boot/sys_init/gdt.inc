@@ -1,5 +1,6 @@
 ; asmsyntax=fasm
 
+align 8
 GDT_Start:
 ; null
 	dq 0h

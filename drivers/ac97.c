@@ -44,7 +44,7 @@ void AC97Init()
 	sample_capabilities = 
 		(MMInL(nabm_base + BUS_REG_GSTS) >> 22) & 0x03;
 	Print("Sample capabilities bits: ", WHITE);
-	PrintNum(channel_capabilities, LIGHT_CYAN);
+	PrintNum(sample_capabilities, LIGHT_CYAN);
 	PutC('\n', WHITE);
 
 	ext_capabilities = (MMInW(nam_base + MIXER_EXT_CAPABILITIES) & 0x08)
@@ -59,16 +59,17 @@ void AC97Init()
 	PrintNum((u64)bdl_ptr, LIGHT_CYAN);
 	PutC('\n', WHITE);
 
+	// Mute at init
 	MMOutW(nam_base + MIXER_PCM_OUT_VOL, 0);
+	MMOutW(nam_base + MIXER_MASTER_OUT_VOL, 0);
 }
 
 void AC97Play()
 {
-	MMOutW(nam_base + MIXER_MASTER_OUT_VOL, 0);
+	MMOutW(nam_base + MIXER_PCM_OUT_VOL, 0x808);
+	MMOutW(nam_base + MIXER_MASTER_OUT_VOL, 0x808);
 
 	FillBDL();
-
-	Brk();
 
 	MMOutB(nabm_base + BUS_REG_RESET, 0x02);
 	while((MMInB(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
@@ -78,6 +79,9 @@ void AC97Play()
 	MMOutB(nabm_base + BUS_PCM_OUT_BOX + BUS_NUM_OF_BD_ENTRIES, 1);
 
 	MMOutB(nabm_base + BUS_REG_RESET, 0x01);
+
+	// Start the PCM output stream
+	MMOutW(nam_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
 }
 
 void SetSampleRate(u16 sample_rate)
@@ -86,11 +90,12 @@ void SetSampleRate(u16 sample_rate)
 
 void FillBDL()
 {
-	bdl_ptr[curr_entry].addr = (u32)audio_buffer;
-	bdl_ptr[curr_entry].num_of_samples = BUFFER_SIZE;
-	bdl_ptr[curr_entry].reserved = 0;
-	bdl_ptr[curr_entry].last_buffer_entry = 0;
-	bdl_ptr[curr_entry].int_on_completion = 0;
-
+	bdl_ptr[curr_entry] = (struct BDL_Entry) { 
+		.addr = (u32)audio_buffer,
+		.num_of_samples = BUFFER_SIZE,
+		.reserved = 0,
+		.last_buffer_entry = 1,
+		.int_on_completion = 1
+	};
 	curr_entry = (curr_entry + 1) & (NUM_OF_BDL_ENTRIES - 1);
 }

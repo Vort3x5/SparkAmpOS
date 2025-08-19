@@ -109,16 +109,18 @@ SetVideoMode:
 	mov al, 03h
 	int 10h
 	Print vga_mode_enabled_msg
-
-GDT:
-	dw (GDT_End - GDT_Start - 1)
-	dd GDT_Start
  
 ProtectedMode:
 	cli
 	lgdt [GDT]
 	Print gdt_loaded_msg
 	
+	; Disable paging
+	mov eax, cr0
+	and eax, 7fffffffh ; Clear PG bit (bit 31)
+	mov cr0, eax
+
+	; Enable protected mode
 	mov eax, cr0
 	or eax, 1
 	mov cr0, eax
@@ -142,6 +144,10 @@ JumpKernel:
 	jmp 100000h
 
 include '../sys_init/gdt.inc'
+
+GDT:
+	dw (GDT_End - GDT_Start - 1)
+	dd GDT_Start
 
 snd_loaded_msg db 'Second Stage Loaded!', 0
 

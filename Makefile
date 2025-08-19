@@ -1,8 +1,9 @@
 ASM := fasm
-CC := i686-elf-gcc
-LD := i686-elf-ld
-CFLAGS := -O1 -std=gnu99 -nostdlib -ffreestanding -I include/ \
-		  -Wno-shift-count-overflow -Wno-int-to-pointer-cast
+CC := gcc
+LD := ld
+CFLAGS := -m32 -O1 -std=gnu99 -nostdlib -ffreestanding -fno-pie -fno-stack-protector \
+          -I include/ -Wno-shift-count-overflow -Wno-int-to-pointer-cast \
+		  -fno-builtin -fno-asynchronous-unwind-tables -g
 
 C_SRCS := $(wildcard src/*.c drivers/*.c)
 ASM_SRCS := $(wildcard init/*.asm)
@@ -42,9 +43,8 @@ bin/%.bin: boot/src/%.asm
 kernel_info:
 	lua scripts/kernel_size.lua
 
-# $(CC) $(CFLAGS) -e _Start -Ttext 0x1000 -o bin/$@ $^
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
-	$(LD) --Ttext 0x100000 -s --oformat binary -e _Start -o bin/$@ $(LLD)
+	$(LD) -m elf_i386 -T scripts/link.ld --oformat binary -o bin/$@ $(LLD)
 
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LLD)
