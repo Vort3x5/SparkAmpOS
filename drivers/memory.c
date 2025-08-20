@@ -14,7 +14,6 @@ static u64 curr_entry = 0;
 void Memset(void *src, s32 value, s32 size)
 {
 	byte *ptr = src;
-
 	for (s32 i = 0; i < size; ++i)
 		ptr[i] = value;
 }
@@ -42,6 +41,49 @@ void InitDMem()
 			.acpi = acpi,
 		};
 	}
+}
+
+void ArenaInit(Arena *arena, void *buffer, u64 size)
+{
+	arena->region = (ArenaRegion *)buffer;
+	arena->region->size = size - sizeof(ArenaRegion);
+	arena->region->used = 0;
+}
+
+void *Alloc(Arena *arena, u64 size)
+{
+	if (size == 0)
+		return NULL;
+
+	size = AlignUp(size, 8);
+
+	if (arena->region->used + size > arena->region->size)
+		return NULL;
+
+	void *result = arena->region->data + arena->region->used;
+	arena->region->used += size;
+	return result;
+}
+
+void *AllignedAlloc(Arena *arena, u64 size, u64 alignment)
+{
+	if (size == 0)
+		return NULL;
+
+	u64 current_pos = (u64)(arena->region->data + arena->region->used);
+	u64 aligned_pos = AlignUp(current_pos, alignment);
+	u64 padding = aligned_pos - current_pos;
+
+	if (arena->region->used + padding + size > arena->region->size)
+		return NULL;
+
+	arena->region->used += padding + size;
+	return (void *)aligned_pos;
+}
+
+void ArenaReset(Arena *arena)
+{
+	arena->region->used = 0;
 }
 
 u64 Malloc(u64 len)
