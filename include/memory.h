@@ -10,10 +10,8 @@
 
 struct MemMapEntry
 {
-	u64 base;
-	u64 len;
-	u32 type;
-	u32 acpi;
+	u64 base, len;
+	u32 type, acpi;
 }__attribute__((packed));
 
 typedef struct ArenaRegion ArenaRegion;
@@ -31,10 +29,6 @@ struct Arena
 };
 
 #ifdef MEM_DEF
-
-static u8 temp_buffer[128 * 1024];
-static u8 video_buffer[64 * 1024];
-static u8 audio_buffer[512 * 1024];
 
 Arena temp_arena, video_arena, audio_arena;
 

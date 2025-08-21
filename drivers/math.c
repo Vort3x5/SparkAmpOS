@@ -2,8 +2,6 @@
 
 f64 Sin(f64 x)
 {
-	x *= (PI / 180.0);
-
 	while (x > PI)
 		x -= 2 * PI;
 	while (x < -PI)
