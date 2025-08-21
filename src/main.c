@@ -11,12 +11,12 @@
 
 void Main() 
 {
-	TTYInit();
+	InitDMem();
+	TTYReset();
 
 	Clear();
 	Print("Start!\n", BLUE);
 
-	InitDMem();
 	Print("Dynamic Memory Initialized\n", GREEN);
 
 	IDTInstall();
@@ -28,7 +28,6 @@ void Main()
 	ScanPCI();
 	PrintSepration();
 
-	AudioInit();
 	AC97Init();
 
 	Print("AC97 Sound Card Initialized\n", GREEN);

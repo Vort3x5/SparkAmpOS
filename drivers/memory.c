@@ -37,6 +37,8 @@ void InitDMem()
 	}
 
 	ArenaInit(&temp_arena, temp_buffer, sizeof temp_buffer);
+	ArenaInit(&video_arena, video_buffer, sizeof video_buffer);
+	ArenaInit(&audio_arena, audio_buffer, sizeof audio_buffer);
 }
 
 void ArenaInit(Arena *arena, void *buffer, u64 size)

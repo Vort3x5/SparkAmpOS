@@ -60,7 +60,7 @@ void CORBInit()
 {
 	MMOutB(hda_base + HDA_REG_CORBCTL, 0x0);
 
-	corb_base = AlignedMalloc(256 * sizeof(u32), 128);
+	// corb_base = AlignedMalloc(256 * sizeof(u32), 128);
 	MMOutL(hda_base + HDA_REG_CORBLBASE, (u32)corb_base);
 	MMOutL(hda_base + HDA_REG_CORBUBASE, 0);
 
@@ -101,7 +101,7 @@ void RIRBInit()
 {
 	MMOutB(hda_base + HDA_REG_RIRBCTL, 0x0);
 
-	rirb_base = AlignedMalloc(256 * sizeof(u64), 128);
+	// rirb_base = AlignedMalloc(256 * sizeof(u64), 128);
 	MMOutL(hda_base + HDA_REG_RIRBLBASE, (u64)rirb_base);
 	MMOutL(hda_base + HDA_REG_RIRBUBASE, 0);
 

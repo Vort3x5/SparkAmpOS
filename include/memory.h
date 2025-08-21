@@ -34,7 +34,7 @@ struct Arena
 
 static u8 temp_buffer[128 * 1024];
 static u8 video_buffer[64 * 1024];
-static u8 temp_buffer[512 * 1024];
+static u8 audio_buffer[512 * 1024];
 
 Arena temp_arena, video_arena, audio_arena;
 

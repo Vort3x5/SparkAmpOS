@@ -11,12 +11,6 @@ void TTYReset()
 	tty.addr = 0;
 }
 
-void TTYInit()
-{
-	ArenaInit(&video_arena, video_buffer, sizeof video_buffer);
-	TTYReset();
-}
-
 void Clear()
 {
 	s32 area = TEXT_MODE_COLS * TEXT_MODE_ROWS;
@@ -63,7 +57,8 @@ void PrintNum(u64 num, enum Colors color)
 		buff /= 10;
 	}
 
-	char *backward = (char *)Malloc(len), *msg = (char *)Malloc(len + 1);
+	char *backward = AllocArray(&temp_arena, char, len); 
+	char *msg = AllocArray(&temp_arena, char, len + 1);
 	for (s32 i = 0; i < len; ++i, num /= 10)
 		backward[i] = '0' + (num % 10);
 
@@ -71,9 +66,6 @@ void PrintNum(u64 num, enum Colors color)
 		msg[i] = backward[j];
 	msg[len] = '\0';
 	Print(msg, color);
-
-	Free((u64)msg, len + 1);
-	Free((u64)backward, len);
 }
 
 void PrintSepration()

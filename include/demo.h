@@ -16,5 +16,4 @@ static s16 *demo_audio;
 
 void Brk();
 
-void AudioInit();
 void GenerateSineWave();

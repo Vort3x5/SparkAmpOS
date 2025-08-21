@@ -9,11 +9,6 @@
 
 s16 *demo_audio;
 
-void AudioInit()
-{
-	ArenaInit(&audio_arena, audio_buffer, sizeof demo_audio);
-}
-
 void GenerateSineWave()
 {
 	demo_audio = AllocArray(&audio_arena, s16, BUFFER_SIZE);
@@ -24,6 +19,7 @@ void GenerateSineWave()
 		f64 t = (f64)i / SAMPLE_RATE;
 		f64 sample = AMPLITUDE * Sin(2.0 * PI * FREQUENCY * t);
 		demo_audio[i] = (s16)sample;
+Brk();
 	}
 }
 

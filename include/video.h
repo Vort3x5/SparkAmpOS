@@ -45,7 +45,6 @@ static inline u16 VgaEntry(u8 c, enum Colors color)
 	{ return (u16) c | (u16) color << 8; }
 
 void TTYReset();
-void TTYInit();
 void Clear();
 void PutC(char c, enum Colors color);
 void Print(const char *msg, enum Colors color);
