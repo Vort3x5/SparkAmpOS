@@ -7,19 +7,23 @@
 #include <video.h>
 #include <interrupts.h>
 
-s16 *audio_buffer;
+s16 *demo_audio;
+
+void AudioInit()
+{
+	ArenaInit(&audio_arena, audio_buffer, sizeof demo_audio);
+}
 
 void GenerateSineWave()
 {
-	audio_buffer = (s16 *)Malloc(sizeof(s16) * BUFFER_SIZE);
-	PrintNum((u64)audio_buffer, LIGHT_CYAN);
+	demo_audio = AllocArray(&audio_arena, s16, BUFFER_SIZE);
+	PrintNum((u64)demo_audio, LIGHT_CYAN);
 	PutC('\n', WHITE);
 	for (s32 i = 0; i < BUFFER_SIZE; ++i)
 	{
 		f64 t = (f64)i / SAMPLE_RATE;
 		f64 sample = AMPLITUDE * Sin(2.0 * PI * FREQUENCY * t);
-		audio_buffer[i] = (s16)sample;
-		PrintIter(i, MAGENTA);
+		demo_audio[i] = (s16)sample;
 	}
 }
 

@@ -31,7 +31,7 @@ enum Colors
 };
 
 typedef struct {
-	word *vga_text_buffer;
+	u16 *vga_text_buffer;
 	u32 addr;
 } TTY;
 
@@ -41,10 +41,11 @@ static TTY tty;
 
 #endif
 
-static inline word VgaEntry(byte c, enum Colors color)
-	{ return (word) c | (word) color << 8; }
+static inline u16 VgaEntry(u8 c, enum Colors color)
+	{ return (u16) c | (u16) color << 8; }
 
 void TTYReset();
+void TTYInit();
 void Clear();
 void PutC(char c, enum Colors color);
 void Print(const char *msg, enum Colors color);

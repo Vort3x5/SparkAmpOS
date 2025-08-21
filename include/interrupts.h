@@ -19,23 +19,23 @@ extern bool k_pressed;
 
 struct IDT_Entry
 {
-	word base_lo;
-	word sel;
-	byte always0;
-	byte flags;
-	word base_hi;
+	u16 base_lo;
+	u16 sel;
+	u8 always0;
+	u8 flags;
+	u16 base_hi;
 } __attribute__((packed));
 
 struct IDT_Ptr
 {
-	word limit;
-	dword base;
+	u8 limit;
+	u32 base;
 } __attribute__((packed));
 
 extern void _Halt();
 extern void _IDTLoad();
 
-void IDTSetGate(byte index, dword base);
+void IDTSetGate(u8 index, u32 base);
 void IDTInstall();
 
 extern void ISR_0();

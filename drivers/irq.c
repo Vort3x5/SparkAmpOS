@@ -38,22 +38,22 @@ void IRQsInstall()
 {
 	RemapIRQ();
 
-	IDTSetGate(32, (dword)IRQ_0);
-	IDTSetGate(33, (dword)IRQ_1);
-	IDTSetGate(34, (dword)IRQ_2);
-	IDTSetGate(35, (dword)IRQ_3);
-	IDTSetGate(36, (dword)IRQ_4);
-	IDTSetGate(37, (dword)IRQ_5);
-	IDTSetGate(38, (dword)IRQ_6);
-	IDTSetGate(39, (dword)IRQ_7);
-	IDTSetGate(40, (dword)IRQ_8);
-	IDTSetGate(41, (dword)IRQ_9);
-	IDTSetGate(42, (dword)IRQ_10);
-	IDTSetGate(43, (dword)IRQ_11);
-	IDTSetGate(44, (dword)IRQ_12);
-	IDTSetGate(45, (dword)IRQ_13);
-	IDTSetGate(46, (dword)IRQ_14);
-	IDTSetGate(47, (dword)IRQ_15);
+	IDTSetGate(32, (u32)IRQ_0);
+	IDTSetGate(33, (u32)IRQ_1);
+	IDTSetGate(34, (u32)IRQ_2);
+	IDTSetGate(35, (u32)IRQ_3);
+	IDTSetGate(36, (u32)IRQ_4);
+	IDTSetGate(37, (u32)IRQ_5);
+	IDTSetGate(38, (u32)IRQ_6);
+	IDTSetGate(39, (u32)IRQ_7);
+	IDTSetGate(40, (u32)IRQ_8);
+	IDTSetGate(41, (u32)IRQ_9);
+	IDTSetGate(42, (u32)IRQ_10);
+	IDTSetGate(43, (u32)IRQ_11);
+	IDTSetGate(44, (u32)IRQ_12);
+	IDTSetGate(45, (u32)IRQ_13);
+	IDTSetGate(46, (u32)IRQ_14);
+	IDTSetGate(47, (u32)IRQ_15);
 }
 
 void HandleIRQ(s32 int_num)

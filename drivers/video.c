@@ -7,8 +7,14 @@
 
 void TTYReset()
 {
-	tty.vga_text_buffer = (word *) VGA_ADDR;
+	tty.vga_text_buffer = (u16 *) VGA_ADDR;
 	tty.addr = 0;
+}
+
+void TTYInit()
+{
+	ArenaInit(&video_arena, video_buffer, sizeof video_buffer);
+	TTYReset();
 }
 
 void Clear()

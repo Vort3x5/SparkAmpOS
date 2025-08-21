@@ -6,7 +6,7 @@
 static struct IDT_Entry idt[256];
 struct IDT_Ptr idtp;
 
-void IDTSetGate(byte index, dword base)
+void IDTSetGate(u8 index, u32 base)
 {
 	idt[index] = (struct IDT_Entry) {
 		.base_lo = (base) & 0xffff,
@@ -20,7 +20,7 @@ void IDTSetGate(byte index, dword base)
 void IDTInstall()
 {
 	idtp.limit = (sizeof (struct IDT_Entry) * 256) - 1;
-	idtp.base = (dword) &idt[0];
+	idtp.base = (u32) &idt[0];
 
 	Memset((void *)&idt[0], 0, (sizeof (struct IDT_Entry)) * 256);
 

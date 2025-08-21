@@ -54,7 +54,7 @@ void AC97Init()
 	PutC('\n', WHITE);
 
 	bdl_ptr = 
-		(struct BDL_Entry *)AlignedMalloc(sizeof (struct BDL_Entry) * 32, 0x10);
+		(struct BDL_Entry *)AllignedAlloc(&audio_arena, sizeof ((struct BDL_Entry) * 32), 16);
 	Print("BDL address: ", WHITE);
 	PrintNum((u64)bdl_ptr, LIGHT_CYAN);
 	PutC('\n', WHITE);
@@ -91,7 +91,7 @@ void SetSampleRate(u16 sample_rate)
 void FillBDL()
 {
 	bdl_ptr[curr_entry] = (struct BDL_Entry) { 
-		.addr = (u32)audio_buffer,
+		.addr = (u32)demo_audio,
 		.num_of_samples = BUFFER_SIZE,
 		.reserved = 0,
 		.last_buffer_entry = 1,

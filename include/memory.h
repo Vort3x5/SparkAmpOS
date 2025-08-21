@@ -2,11 +2,11 @@
 
 #include <stdtypes.h>
 
-#define ArenaAllocType(arena, type) \
-    ((type *))ArenaAlloc((arena), sizeof(type)))
+#define AllocType(arena, type) \
+    ((type *))Alloc((arena), sizeof(type)))
 
-#define ArenaAllocArray(arena, type, count) \
-    ((type *)ArenaAlloc((arena), sizeof(type) * (count)))
+#define AllocArray(arena, type, count) \
+    ((type *)Alloc((arena), sizeof(type) * (count)))
 
 struct MemMapEntry
 {
@@ -30,19 +30,29 @@ struct Arena
 	ArenaRegion *region;
 };
 
+#ifdef MEM_DEF
+
+static u8 temp_buffer[128 * 1024];
+static u8 video_buffer[64 * 1024];
+static u8 temp_buffer[512 * 1024];
+
+Arena temp_arena, video_arena, audio_arena;
+
+#endif
+
+extern Arena temp_arena;
+extern Arena video_arena;
+extern Arena audio_arena;
+
 static inline u64 AlignUp(u64 value, u64 alignment)
     { return (value + alignment - 1) & ~(alignment - 1); }
 
-void Memset(void *src, s32 value, s32 size);
-
 void InitDMem();
-u64 Malloc(u64 len);
-u64 AlignedMalloc(u64 len, u64 alignment);
-void Free(u64 addr, u64 len);
 
 void ArenaInit(Arena *arena, void *buffer, u64 size);
-void *ArenaAlloc(Arena *arena, u64 size);
-void ArenaReset(Arena *arena);
-void ArenaFree(Arena *arena);
+void *Alloc(Arena *arena, u64 size);
+void *AllignedAlloc(Arena *arena, u64 size, u64 alignment);
+void Free(Arena *arena);
 
+void Memset(void *src, s32 value, s32 size);
 void MemDump();

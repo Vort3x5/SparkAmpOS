@@ -64,7 +64,7 @@ void CORBInit()
 	MMOutL(hda_base + HDA_REG_CORBLBASE, (u32)corb_base);
 	MMOutL(hda_base + HDA_REG_CORBUBASE, 0);
 
-	byte corb_entries_info;
+	u8 corb_entries_info;
 	if ((MMInB(hda_base + HDA_REG_CORBSIZE) & 0x40) == 0x40)
 		corb_entries = 256, corb_entries_info = 0x2;
 	else if ((MMInB(hda_base + HDA_REG_CORBSIZE) & 0x20) == 0x20)
@@ -105,7 +105,7 @@ void RIRBInit()
 	MMOutL(hda_base + HDA_REG_RIRBLBASE, (u64)rirb_base);
 	MMOutL(hda_base + HDA_REG_RIRBUBASE, 0);
 
-	byte rirb_entries_info;
+	u8 rirb_entries_info;
 	if ((MMInB(hda_base + HDA_REG_RIRBSIZE) & 0x40) == 0x40)
 		rirb_entries = 256, rirb_entries_info = 0x2;
 	else if ((MMInB(hda_base + HDA_REG_RIRBSIZE) & 0x20) == 0x20)

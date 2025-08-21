@@ -11,7 +11,7 @@
 
 void Main() 
 {
-	TTYReset();
+	TTYInit();
 
 	Clear();
 	Print("Start!\n", BLUE);
@@ -28,6 +28,7 @@ void Main()
 	ScanPCI();
 	PrintSepration();
 
+	AudioInit();
 	AC97Init();
 
 	Print("AC97 Sound Card Initialized\n", GREEN);
@@ -35,8 +36,6 @@ void Main()
 
 	GenerateSineWave();
 	AC97Play();
-
-	Brk();
 
 	Print("Finish!", BLUE);
 	_Halt();
