@@ -1,23 +1,19 @@
 #define MEM_DEF
 #include <memory.h>
 
+#include <utils.h>
 #include <stdtypes.h>
 #include <video.h>
 #include <interrupts.h>
 #include <demo.h>
 
-static u32 mmap_size;
-static struct MemMapEntry mmap[32];
-static u64 curr_addr;
-static u64 curr_entry = 0;
-
 void InitDMem()
 {
-	mmap_size = *((u32 *)0x2000);
+	mmap_count = *((u32 *)0x2000);
 	
 	// assigning 0x2004 address to MemMapEntry struct doesn't work with standard gcc 
 	u32 *raw_mem_data = (u32 *)0x2004;
-	for (u32 i = 0; i < mmap_size; ++i)
+	for (u32 i = 0; i < mmap_count; ++i)
 	{
 		u32 offset = (i * 6);
 
@@ -35,53 +31,94 @@ void InitDMem()
 			.acpi = acpi,
 		};
 	}
-
-	ArenaInit(&temp_arena, temp_buffer, sizeof temp_buffer);
-	ArenaInit(&video_arena, video_buffer, sizeof video_buffer);
-	ArenaInit(&audio_arena, audio_buffer, sizeof audio_buffer);
 }
 
-void ArenaInit(Arena *arena, void *buffer, u64 size)
+u8 *Malloc(u64 size )
 {
-	arena->region = (ArenaRegion *)buffer;
-	arena->region->size = size - sizeof(ArenaRegion);
-	arena->region->used = 0;
+	// Ask about alignment
+	for (u32 i = 0; i < mmap_count; ++i)
+	{
+		if (!(mmap[i].acpi & 1) || mmap[i].type != 1)
+			continue;
+
+		u64 region_start = mmap[i].base;
+		u64 region_end = mmap[i].base + mmap[i].len;
+
+		if (next_alloc_base >= region_start && next_alloc_base + size <= region_end)
+		{
+			u8 *result = (u8 *)next_alloc_base;
+			next_alloc_base += size;
+			return result;
+		}
+		else if (next_alloc_base < region_start && region_start + size <= region_end)
+		{
+			next_alloc_base = region_start;
+			u8 *result = (u8 *)next_alloc_base;
+			next_alloc_base += size;
+			return result;
+		}
+	}
+	FAILED("ERROR: No more memory avaliable to allocate");
 }
 
-void *Alloc(Arena *arena, u64 size)
+void ArenaInit(Arena *arena)
+{
+	arena->begin = NULL;
+	arena->end = NULL;
+}
+
+void *ArenaAlloc(Arena *arena, u64 size, u64 alignment)
 {
 	if (size == 0)
 		return NULL;
 
-	size = AlignUp(size, 8);
+	size = AlignUp(size, alignment);
 
-	if (arena->region->used + size > arena->region->size)
-		return NULL;
+	if (!arena->end || arena->end->used + size > arena->end->size)
+	{
+		Arena_Region *new_region = NewArenaRegion(arena, size);
+		if (!new_region)
+			FAILED("ERROR: Failed to create new region!");
 
-	void *result = arena->region->data + arena->region->used;
-	arena->region->used += size;
+		if (!arena->begin)
+			arena->begin = new_region;
+		else
+		{
+			Arena_Region *last = arena->begin;
+			while (last->next)
+				last = last->next;
+			last->next = new_region;
+		}
+		arena->end = new_region;
+	}
+
+	u64 aligned_offset = AlignUp(arena->end->used, alignment);
+	if (aligned_offset + size > arena->end->size)
+		FAILED("ERROR: Region too small after alignment!");
+
+	void *result = arena->end->data + aligned_offset;
+	arena->end->used = aligned_offset + size;
 	return result;
 }
 
-void *AllignedAlloc(Arena *arena, u64 size, u64 alignment)
+Arena_Region *NewArenaRegion(Arena *arena, u64 size)
 {
-	if (size == 0)
-		return NULL;
+	u64 total_size = sizeof(Arena_Region) + size;
 
-	u64 current_pos = (u64)(arena->region->data + arena->region->used);
-	u64 aligned_pos = AlignUp(current_pos, alignment);
-	u64 padding = aligned_pos - current_pos;
+	Arena_Region *region = (Arena_Region *)Malloc(size);;
+	region->next = NULL;
+	region->size = size;
+	region->count = 0;
+	Memset(region->data, 0, size);
 
-	if (arena->region->used + padding + size > arena->region->size)
-		return NULL;
-
-	arena->region->used += padding + size;
-	return (void *)aligned_pos;
+	return region;
 }
 
-void ArenaReset(Arena *arena)
+void Free(Arena *arena)
 {
-	arena->region->used = 0;
+	for (Arena_Region *r = arena->begin; r != NULL; r = r->next)
+		r->count = 0;
+	arena->end = arena->begin;
 }
 
 void Memset(void *src, s32 value, s32 size)
@@ -94,11 +131,11 @@ void Memset(void *src, s32 value, s32 size)
 void MemDump()
 {
 	Print("Num of entries: ", WHITE);
-	PrintNum(mmap_size, LIGHT_CYAN);
+	PrintNum(mmap_count, LIGHT_CYAN);
 	PutC('\n', WHITE);
 	Print("(Base | Len | Type): ", WHITE);
 	PutC('\n', WHITE);
-	for (s32 i = 0; i < mmap_size; ++i)
+	for (s32 i = 0; i < mmap_count; ++i)
 	{
 		PrintNum(mmap[i].base, LIGHT_CYAN);
 		Print(" | ", WHITE);

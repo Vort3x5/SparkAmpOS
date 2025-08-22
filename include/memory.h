@@ -2,11 +2,15 @@
 
 #include <stdtypes.h>
 
-#define AllocType(arena, type) \
-    ((type *))Alloc((arena), sizeof(type)))
+#define NORESET_REGION_SIZE (128 * 1024)
+#define TEMP_REGION_SIZE (256 * 1024)
+#define FRAME_REGION_SIZE (64 * 1024)
 
-#define AllocArray(arena, type, count) \
-    ((type *)Alloc((arena), sizeof(type) * (count)))
+#define ALLOC(arena, type) \
+    ((type *))ArenaAlloc((arena), sizeof(type), _Alignof(type))
+
+#define ALLOC_ARRAY(arena, type, count) \
+    ((type *)ArenaAlloc((arena), sizeof(type) * (count), _Alignof(type)))
 
 struct MemMapEntry
 {
@@ -14,38 +18,46 @@ struct MemMapEntry
 	u32 type, acpi;
 }__attribute__((packed));
 
-typedef struct ArenaRegion ArenaRegion;
+typedef struct Arena_Region Arena_Region;
 typedef struct Arena Arena;
+typedef struct Arena_Mark Arena_Mark;
 
-struct ArenaRegion
+struct Arena_Region
 {
+	Arena_Region *next;
 	u64 size, used;
 	u8 data[];
 };
 
-struct Arena
-{
-	ArenaRegion *region;
+struct Arena {
+	Arena_Region *begin, *end;
+};
+
+struct Arena_Mark {
+	Arena_Region *region;
+	u64 count;
 };
 
 #ifdef MEM_DEF
 
-Arena temp_arena, video_arena, audio_arena;
+static u32 mmap_count;
+static struct MemMapEntry mmap[32];
+static u64 next_alloc_base;
+
+Arena g_noreset_buffer, g_temp_buffer, g_frame_buffer;
 
 #endif
 
-extern Arena temp_arena;
-extern Arena video_arena;
-extern Arena audio_arena;
+extern Arena g_noreset_buffer, g_temp_buffer, g_frame_buffer;
 
 static inline u64 AlignUp(u64 value, u64 alignment)
     { return (value + alignment - 1) & ~(alignment - 1); }
 
 void InitDMem();
+u8 *Malloc(u64 size);
 
 void ArenaInit(Arena *arena, void *buffer, u64 size);
-void *Alloc(Arena *arena, u64 size);
-void *AllignedAlloc(Arena *arena, u64 size, u64 alignment);
+void *ArenaAlloc(Arena *arena, u64 size, u64 alignment);
 void Free(Arena *arena);
 
 void Memset(void *src, s32 value, s32 size);

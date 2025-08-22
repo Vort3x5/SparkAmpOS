@@ -2,6 +2,7 @@
 #include <demo.h>
 
 #include <stdtypes.h>
+#include <utils.h>
 #include <math.h>
 #include <memory.h>
 #include <video.h>
@@ -21,10 +22,4 @@ void GenerateSineWave()
 		demo_audio[i] = (s16)sample;
 Brk();
 	}
-}
-
-void Brk()
-{
-	Print("Breakpoint!\n", YELLOW);
-	_Halt();
 }
