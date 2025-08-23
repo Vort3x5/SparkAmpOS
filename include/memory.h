@@ -29,13 +29,15 @@ struct Arena_Region
 	u8 data[];
 };
 
-struct Arena {
+struct Arena 
+{
 	Arena_Region *begin, *end;
 };
 
-struct Arena_Mark {
+struct Arena_Mark 
+{
 	Arena_Region *region;
-	u64 count;
+	u64 used;
 };
 
 #ifdef MEM_DEF
@@ -43,6 +45,8 @@ struct Arena_Mark {
 static u32 mmap_count;
 static struct MemMapEntry mmap[32];
 static u64 next_alloc_base;
+
+extern u8 _kernel_end;
 
 Arena g_noreset_buffer, g_temp_buffer, g_frame_buffer;
 
@@ -56,9 +60,12 @@ static inline u64 AlignUp(u64 value, u64 alignment)
 void InitDMem();
 u8 *Malloc(u64 size);
 
-void ArenaInit(Arena *arena, void *buffer, u64 size);
 void *ArenaAlloc(Arena *arena, u64 size, u64 alignment);
+Arena_Region *NewArenaRegion(Arena *arena, u64 size);
 void Free(Arena *arena);
+
+Arena_Mark ArenaSnapshot(Arena *arena);
+void ArenaRewind(Arena *arena, Arena_Mark mark);
 
 void Memset(void *src, s32 value, s32 size);
 void MemDump();

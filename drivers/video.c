@@ -57,8 +57,8 @@ void PrintNum(u64 num, enum Colors color)
 		buff /= 10;
 	}
 
-	char *backward = AllocArray(&temp_arena, char, len); 
-	char *msg = AllocArray(&temp_arena, char, len + 1);
+	char *backward = ALLOC_ARRAY(&g_frame_buffer, char, len); 
+	char *msg = ALLOC_ARRAY(&g_frame_buffer, char, len + 1);
 	for (s32 i = 0; i < len; ++i, num /= 10)
 		backward[i] = '0' + (num % 10);
 

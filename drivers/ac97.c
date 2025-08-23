@@ -54,7 +54,7 @@ void AC97Init()
 	PutC('\n', WHITE);
 
 	bdl_ptr = 
-		(struct BDL_Entry *)AllignedAlloc(&audio_arena, (sizeof (struct BDL_Entry)) * 32, 16);
+		(struct BDL_Entry *)ArenaAlloc(&g_noreset_buffer, (sizeof (struct BDL_Entry)) * 32, 16);
 	Print("BDL address: ", WHITE);
 	PrintNum((u64)bdl_ptr, LIGHT_CYAN);
 	PutC('\n', WHITE);

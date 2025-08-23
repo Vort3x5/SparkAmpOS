@@ -10,19 +10,19 @@
 void InitDMem()
 {
 	mmap_count = *((u32 *)0x2000);
-	
+
 	// assigning 0x2004 address to MemMapEntry struct doesn't work with standard gcc 
-	u32 *raw_mem_data = (u32 *)0x2004;
+	u32 *raw_mem = (u32 *)0x2004;
 	for (u32 i = 0; i < mmap_count; ++i)
 	{
 		u32 offset = (i * 6);
 
-		u32 base_low = raw_mem_data[offset];
-		u32 base_high = raw_mem_data[offset + 1];
-		u32 len_low = raw_mem_data[offset + 2];
-		u32 len_high = raw_mem_data[offset + 3];
-		u32 type = raw_mem_data[offset + 4];
-		u32 acpi = raw_mem_data[offset + 5];
+		u32 base_low = raw_mem[offset];
+		u32 base_high = raw_mem[offset + 1];
+		u32 len_low = raw_mem[offset + 2];
+		u32 len_high = raw_mem[offset + 3];
+		u32 type = raw_mem[offset + 4];
+		u32 acpi = raw_mem[offset + 5];
 
 		mmap[i] = (struct MemMapEntry) {
 			.base = (u64)(base_high << 32) | base_low,
@@ -31,11 +31,15 @@ void InitDMem()
 			.acpi = acpi,
 		};
 	}
+
+	u64 kernel_end_addr = (u64)&_kernel_end;
+	next_alloc_base = AlignUp(kernel_end_addr + 0x1000, 4096);
 }
 
 u8 *Malloc(u64 size )
 {
-	// Ask about alignment
+	size = AlignUp(size, 4096);
+
 	for (u32 i = 0; i < mmap_count; ++i)
 	{
 		if (!(mmap[i].acpi & 1) || mmap[i].type != 1)
@@ -59,12 +63,6 @@ u8 *Malloc(u64 size )
 		}
 	}
 	FAILED("ERROR: No more memory avaliable to allocate");
-}
-
-void ArenaInit(Arena *arena)
-{
-	arena->begin = NULL;
-	arena->end = NULL;
 }
 
 void *ArenaAlloc(Arena *arena, u64 size, u64 alignment)
@@ -105,10 +103,10 @@ Arena_Region *NewArenaRegion(Arena *arena, u64 size)
 {
 	u64 total_size = sizeof(Arena_Region) + size;
 
-	Arena_Region *region = (Arena_Region *)Malloc(size);;
+	Arena_Region *region = (Arena_Region *)Malloc(total_size);;
 	region->next = NULL;
 	region->size = size;
-	region->count = 0;
+	region->used = 0;
 	Memset(region->data, 0, size);
 
 	return region;
@@ -117,8 +115,38 @@ Arena_Region *NewArenaRegion(Arena *arena, u64 size)
 void Free(Arena *arena)
 {
 	for (Arena_Region *r = arena->begin; r != NULL; r = r->next)
-		r->count = 0;
+		r->used = 0;
 	arena->end = arena->begin;
+}
+
+Arena_Mark ArenaSnapshot(Arena *arena)
+{
+	Arena_Mark mark;
+	if (arena->end == NULL)
+		mark = (Arena_Mark) {
+			.region = NULL,
+			.used = 0,
+		};
+	else
+		mark = (Arena_Mark) {
+			.region = arena->end,
+			.used = arena->end->used,
+		};
+	return mark;
+}
+
+void ArenaRewind(Arena *arena, Arena_Mark mark)
+{
+	if (mark.region == NULL)
+	{
+		Free(arena);
+		return;
+	}
+
+	mark.region->used = mark.used;
+	for (Arena_Region *r = mark.region->next; r != NULL; r = r->next)
+		r->used = 0;
+	arena->end = mark.region;
 }
 
 void Memset(void *src, s32 value, s32 size)

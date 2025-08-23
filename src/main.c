@@ -1,4 +1,5 @@
 #include <stdtypes.h>
+#include <utils.h>
 #include <video.h>
 #include <interrupts.h>
 #include <clock.h>
@@ -27,6 +28,7 @@ void Main()
 
 	ScanPCI();
 	PrintSepration();
+BRK();
 
 	AC97Init();
 
