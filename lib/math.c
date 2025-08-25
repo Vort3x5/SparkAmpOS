@@ -34,7 +34,6 @@ void GenerateSineWave()
 	for (u32 i = 0; i < BUFFER_SIZE; ++i)
 	{
 		f64 t = (f64)i / SAMPLE_RATE;
-BRK();
 		f64 sample = AMPLITUDE * Sin(2.0 * PI * FREQUENCY * t);
 		demo_audio[i] = (s16)sample;
 	}

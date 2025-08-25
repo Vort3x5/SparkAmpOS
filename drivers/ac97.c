@@ -76,6 +76,7 @@ void AC97Play()
 	MMOutB(nabm_base + BUS_REG_RESET, 0x02);
 	while((MMInB(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
 		asm("nop");
+BRK();
 
 	MMOutL(nabm_base + BUS_PCM_OUT_BOX + BUS_ADDR_OF_BDL, (u32)bdl_ptr);
 	MMOutB(nabm_base + BUS_PCM_OUT_BOX + BUS_NUM_OF_BD_ENTRIES, 1);
