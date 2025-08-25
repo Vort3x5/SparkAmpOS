@@ -1,6 +1,6 @@
 target remote localhost:1234
-# symbol-file bin/SparkAmpOS.bin
-b *0x100000
+symbol-file bin/SparkAmpOS.elf
+b Malloc
 c
 set disassembly-flavor intel
-lay asm
+lay src

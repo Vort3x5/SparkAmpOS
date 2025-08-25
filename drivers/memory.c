@@ -34,7 +34,7 @@ void InitDMem()
 
 	u64 kernel_end_addr = (u64)&_kernel_end;
 	next_alloc_base = AlignUp(kernel_end_addr + 0x1000, 4096);
-}
+} 
 
 u8 *Malloc(u64 size )
 {
@@ -51,6 +51,7 @@ u8 *Malloc(u64 size )
 		if (next_alloc_base >= region_start && next_alloc_base + size <= region_end)
 		{
 			u8 *result = (u8 *)next_alloc_base;
+BRK();
 			next_alloc_base += size;
 			return result;
 		}

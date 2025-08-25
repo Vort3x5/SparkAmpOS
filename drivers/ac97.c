@@ -2,6 +2,7 @@
 #include <ac97.h>
 
 #include <video.h>
+#include <utils.h>
 #include <pci.h>
 #include <io.h>
 #include <memory.h>

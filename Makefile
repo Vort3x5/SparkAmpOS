@@ -43,9 +43,15 @@ bin/%.bin: boot/src/%.asm
 kernel_info:
 	lua scripts/kernel_size.lua
 
+# Clean Binary for the custom bootloader without debugging symbols
 SparkAmpOS.bin: $(ASM_OBJS) $(C_OBJS)
 	$(LD) -m elf_i386 -T scripts/link.ld --oformat binary -o bin/$@ $(LLD)
 
+# ELF for the custom bootloader with debugging symbols
+SparkAmpOS.elf: $(ASM_OBJS) $(C_OBJS)
+	$(LD) -m elf_i386 -T scripts/link.ld -o bin/$@ $(LLD)
+
+# Binary for GRUB with the debugging symbols
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LLD)
 
@@ -78,7 +84,7 @@ release:
 	# qemu-system-i386 -audio driver=alsa,model=ac97,id=alsa -cdrom iso/boot.iso
 
 # bochs -f .bochsrc
-debug:
+debug: dirs SparkAmpOS.bin SparkAmpOS.elf kernel_info $(BOOT_BINS)
 	qemu-system-i386 -audio driver=alsa,model=ac97,id=alsa -hdb $(DRIVE) -s -S &
 	gdb -x scripts/db_input.gdb
 	# qemu-system-i386 -cdrom iso/boot.iso

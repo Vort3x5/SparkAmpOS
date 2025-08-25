@@ -44,11 +44,11 @@ struct Arena_Mark
 
 static u32 mmap_count;
 static struct MemMapEntry mmap[32];
-static u64 next_alloc_base;
-
-extern u8 _kernel_end;
+static u64 next_alloc_base = 0x200000;
 
 Arena g_noreset_buffer, g_temp_buffer, g_frame_buffer;
+
+extern u8 _kernel_end;
 
 #endif
 

@@ -28,7 +28,6 @@ void Main()
 
 	ScanPCI();
 	PrintSepration();
-BRK();
 
 	AC97Init();
 
