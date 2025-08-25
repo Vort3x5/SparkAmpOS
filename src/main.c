@@ -13,12 +13,10 @@
 void Main() 
 {
 	InitDMem();
-	TTYReset();
 
+	TTYReset();
 	Clear();
 	Print("Start!\n", BLUE);
-
-	Print("Dynamic Memory Initialized\n", GREEN);
 
 	IDTInstall();
 	ISRsInstall();
