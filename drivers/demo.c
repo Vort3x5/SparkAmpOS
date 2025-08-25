@@ -15,7 +15,7 @@ void GenerateSineWave()
 	demo_audio = ALLOC_ARRAY(&g_noreset_buffer, s16, BUFFER_SIZE);
 	PrintNum((u64)demo_audio, LIGHT_CYAN);
 	PutC('\n', WHITE);
-	for (s32 i = 0; i < BUFFER_SIZE; ++i)
+	for (u32 i = 0; i < BUFFER_SIZE; ++i)
 	{
 		f64 t = (f64)i / SAMPLE_RATE;
 		f64 sample = AMPLITUDE * Sin(2.0 * PI * FREQUENCY * t);

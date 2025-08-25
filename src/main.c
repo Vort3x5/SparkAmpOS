@@ -17,8 +17,6 @@ void Main()
 
 	Clear();
 	Print("Start!\n", BLUE);
-	MemDump();
-BRK();
 
 	Print("Dynamic Memory Initialized\n", GREEN);
 
