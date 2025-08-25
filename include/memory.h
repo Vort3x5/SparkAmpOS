@@ -43,8 +43,8 @@ struct Arena_Mark
 #ifdef MEM_DEF
 
 static u32 mmap_count;
-static struct MemMapEntry mmap[32];
-static u64 next_alloc_base = 0x200000;
+static struct MemMapEntry *mmap;
+static u64 next_alloc_base;
 
 Arena g_noreset_buffer, g_temp_buffer, g_frame_buffer;
 

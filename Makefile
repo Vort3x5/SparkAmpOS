@@ -1,11 +1,11 @@
 ASM := fasm
 CC := gcc
 LD := ld
-CFLAGS := -m32 -O1 -std=gnu99 -nostdlib -ffreestanding -fno-pie -fno-stack-protector \
+CFLAGS := -m32 -O0 -std=gnu99 -nostdlib -ffreestanding -fno-pie -fno-stack-protector \
           -I include/ -Wno-shift-count-overflow -Wno-int-to-pointer-cast \
-		  -fno-builtin -fno-asynchronous-unwind-tables -g
+		  -fno-builtin -fno-asynchronous-unwind-tables -g3
 
-C_SRCS := $(wildcard src/*.c drivers/*.c)
+C_SRCS := $(wildcard src/*.c drivers/*.c lib/*.c)
 ASM_SRCS := $(wildcard init/*.asm)
 BOOT_SRCS := $(wildcard boot/src/*.asm)
 
@@ -14,7 +14,7 @@ ASM_OBJS := $(patsubst %.asm, obj/%.o, $(notdir $(ASM_SRCS)))
 
 BOOT_BINS := $(patsubst %.asm, bin/%.bin, $(notdir $(BOOT_SRCS)))
 
-LLD := obj/entry.o $(C_OBJS)
+LLD := $(ASM_OBJS) $(C_OBJS)
 
 DRIVE := /dev/sdb
 
@@ -54,6 +54,9 @@ SparkAmpOS.elf: $(ASM_OBJS) $(C_OBJS)
 # Binary for GRUB with the debugging symbols
 SparkAmpOS: $(ASM_OBJS) $(C_OBJS)
 	$(CC) $(CFLAGS) -T scripts/grub.ld -o bin/$@ $(LLD)
+
+obj/%.o: lib/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 obj/%.o: drivers/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<

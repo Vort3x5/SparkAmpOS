@@ -10,27 +10,7 @@
 void InitDMem()
 {
 	mmap_count = *((u32 *)0x2000);
-
-	// assigning 0x2004 address to MemMapEntry struct doesn't work with standard gcc 
-	u32 *raw_mem = (u32 *)0x2004;
-	for (u32 i = 0; i < mmap_count; ++i)
-	{
-		u32 offset = (i * 6);
-
-		u32 base_low = raw_mem[offset];
-		u32 base_high = raw_mem[offset + 1];
-		u32 len_low = raw_mem[offset + 2];
-		u32 len_high = raw_mem[offset + 3];
-		u32 type = raw_mem[offset + 4];
-		u32 acpi = raw_mem[offset + 5];
-
-		mmap[i] = (struct MemMapEntry) {
-			.base = (u64)(base_high << 32) | base_low,
-			.len = (u64)(len_high << 32) | len_low,
-			.type = type,
-			.acpi = acpi,
-		};
-	}
+	mmap = (struct MemMapEntry *)0x2004;
 
 	u64 kernel_end_addr = (u64)&_kernel_end;
 	next_alloc_base = AlignUp(kernel_end_addr + 0x1000, 4096);
@@ -38,7 +18,7 @@ void InitDMem()
 
 u8 *Malloc(u64 size )
 {
-	size = AlignUp(size, 4096);
+	size = AlignUp(size, 64);
 
 	for (u32 i = 0; i < mmap_count; ++i)
 	{
@@ -51,7 +31,6 @@ u8 *Malloc(u64 size )
 		if (next_alloc_base >= region_start && next_alloc_base + size <= region_end)
 		{
 			u8 *result = (u8 *)next_alloc_base;
-BRK();
 			next_alloc_base += size;
 			return result;
 		}
