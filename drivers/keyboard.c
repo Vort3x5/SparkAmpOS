@@ -15,6 +15,6 @@ void KbHandlerInstall()
 void KbHandler()
 {
 	k_pressed = true;
-	u8 scancode = InB(0x60);
+	u8 scancode = In8(0x60);
 	PrintNum(scancode, MAGENTA);
 }

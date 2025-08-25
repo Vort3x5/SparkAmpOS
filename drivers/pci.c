@@ -39,19 +39,19 @@ void ScanPCI()
 
 void WritePCI(u32 bus, u32 dev, u32 function, u32 offset, u32 val)
 {
-	OutL(CONFIG_ADDR, (0x80000000 | (bus << 16) | (dev << 11) | (function << 8) | (offset)));
-	OutL(CONFIG_DATA, val);
+	Out32(CONFIG_ADDR, (0x80000000 | (bus << 16) | (dev << 11) | (function << 8) | (offset)));
+	Out32(CONFIG_DATA, val);
 }
 
 u32 PCIReadMMIOBar(u32 bus, u32 dev, u32 function, u32 bar)
 {
-	OutL(CONFIG_ADDR, 
+	Out32(CONFIG_ADDR, 
 			(0x80000000 
 			 | (bus << 16) 
 			 | (dev << 11) 
 			 | (function << 8) 
 			 | (bar)));
-	return (InL(CONFIG_DATA) & 0xfffffff0);
+	return (In32(CONFIG_DATA) & 0xfffffff0);
 }
 
 void PCIEnableMMIOBusMastering(u32 bus, u32 dev, u32 function)
@@ -63,11 +63,11 @@ void PCIEnableMMIOBusMastering(u32 bus, u32 dev, u32 function)
 
 u32 ReadPCI(u32 bus, u32 dev, u32 function, u32 offset)
 {
-	OutL(CONFIG_ADDR, 
+	Out32(CONFIG_ADDR, 
 			(0x80000000 
 			 | (bus << 16) 
 			 | (dev << 11) 
 			 | (function << 8) 
 			 | (offset)));
-	return InL(CONFIG_DATA);
+	return In32(CONFIG_DATA);
 }

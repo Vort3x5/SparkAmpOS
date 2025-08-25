@@ -12,9 +12,9 @@ void HandleTimer()
 void InitTimer(s32 hz)
 {
 	s32 divisor = 1193180 / hz;
-	OutB(0x43, 0x36);
-	OutB(0x40, divisor & 0xff);
-	OutB(0x40, divisor >> 8);
+	Out8(0x43, 0x36);
+	Out8(0x40, divisor & 0xff);
+	Out8(0x40, divisor >> 8);
 
 	InstallIRQHandler(HandleTimer, 0);
 }
