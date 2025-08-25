@@ -1,6 +1,7 @@
 #pragma once
 
 #include <video.h>
+#include <interrupts.h>
 
 #define BRK() do { \
     Print("Breakpoint!", YELLOW); \

@@ -5,7 +5,6 @@
 #include <stdtypes.h>
 #include <video.h>
 #include <interrupts.h>
-#include <demo.h>
 
 void InitDMem()
 {

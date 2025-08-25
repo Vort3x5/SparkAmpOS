@@ -59,5 +59,4 @@ void PCIAC97Found(u32 bus, u32 dev, u32 function);
 void AC97Init();
 void AC97Play();
 
-void SetSampleRate(u16 sample_rate);
 void FillBDL();

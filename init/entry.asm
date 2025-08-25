@@ -35,6 +35,22 @@ _IDTLoad:
 	lidt [idtp]
 	ret
 
+public _FPUInit
+_FPUInit:
+    clts
+	fninit
+
+	mov eax, cr0
+	and eax, 0xFFFFFFF3
+	or eax, 0x00000002
+	mov cr0, eax
+
+	mov eax, cr4
+	or eax, 0x00000600
+	mov cr4, eax
+
+	ret
+
 public _Halt
 _Halt:
 	cli

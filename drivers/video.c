@@ -3,7 +3,6 @@
 
 #include <stdtypes.h>
 #include <memory.h>
-#include <demo.h>
 
 void TTYReset()
 {

@@ -34,6 +34,7 @@ struct IDT_Ptr
 
 extern void _Halt();
 extern void _IDTLoad();
+extern void _FPUInit();
 
 void IDTSetGate(u8 index, u32 base);
 void IDTInstall();

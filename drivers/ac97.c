@@ -3,13 +3,14 @@
 
 #include <video.h>
 #include <utils.h>
+#include <math.h>
 #include <pci.h>
 #include <io.h>
 #include <memory.h>
 #include <interrupts.h>
 #include <video.h>
 
-#include <demo.h>
+extern s16 *demo_audio;
 
 bool PCIIsAC97(u32 bus, u32 dev, u32 function)
 {
@@ -83,10 +84,6 @@ void AC97Play()
 
 	// Start the PCM output stream
 	MMOutW(nam_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
-}
-
-void SetSampleRate(u16 sample_rate)
-{
 }
 
 void FillBDL()

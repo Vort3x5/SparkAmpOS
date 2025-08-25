@@ -5,7 +5,6 @@
 #include <interrupts.h>
 #include <io.h>
 #include <video.h>
-#include <demo.h>
 
 void KbHandlerInstall()
 {
