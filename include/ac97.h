@@ -44,7 +44,8 @@ struct BDL_Entry
 
 #ifdef AC97_DEF
 
-static struct BDL_Entry *bdl_ptr;
+static struct BDL_Entry *bdl_out;
+static struct BDL_Entry *bdl_in;
 static u32 curr_entry = 0;
 
 static u64 nam_base, nabm_base;
@@ -59,4 +60,5 @@ void PCIAC97Found(u32 bus, u32 dev, u32 function);
 void AC97Init();
 void AC97Play();
 
-void FillBDL();
+void FillInBDL();
+void FillOutBDL();

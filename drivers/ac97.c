@@ -9,6 +9,7 @@
 #include <memory.h>
 #include <interrupts.h>
 #include <video.h>
+#include <amp.h>
 
 extern s16 *demo_audio;
 
@@ -55,29 +56,33 @@ void AC97Init()
 	PrintNum(ext_capabilities, LIGHT_CYAN);
 	PutC('\n', WHITE);
 
-	bdl_ptr = 
+	bdl_in = 
 		(struct BDL_Entry *)ArenaAlloc(&g_noreset_buffer, (sizeof (struct BDL_Entry)) * 32, 16);
-	Print("BDL address: ", WHITE);
-	PrintNum((u64)bdl_ptr, LIGHT_CYAN);
-	PutC('\n', WHITE);
+
+	bdl_out = 
+		(struct BDL_Entry *)ArenaAlloc(&g_noreset_buffer, (sizeof (struct BDL_Entry)) * 32, 16);
+
+	Out16(nam_base + MIXER_IN_GAIN, 0x0000);
+	Out16(nam_base + MIXER_IN_DEV, 0x0404);
 
 	// Mute at init
 	Out16(nam_base + MIXER_PCM_OUT_VOL, 0);
 	Out16(nam_base + MIXER_MASTER_OUT_VOL, 0);
 }
 
+// Only for Demo sine wave
 void AC97Play()
 {
 	Out16(nam_base + MIXER_PCM_OUT_VOL, 0x808);
 	Out16(nam_base + MIXER_MASTER_OUT_VOL, 0x808);
 
-	FillBDL();
+	FillOutBDL();
 
 	Out8(nabm_base + BUS_REG_RESET, 0x02);
 	while((In8(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
 		asm("nop");
 
-	Out32(nabm_base + BUS_PCM_OUT_BOX + BUS_ADDR_OF_BDL, (u32)bdl_ptr);
+	Out32(nabm_base + BUS_PCM_OUT_BOX + BUS_ADDR_OF_BDL, (u32)bdl_out);
 	Out8(nabm_base + BUS_PCM_OUT_BOX + BUS_NUM_OF_BD_ENTRIES, 1);
 
 	Out8(nabm_base + BUS_REG_RESET, 0x01);
@@ -86,10 +91,21 @@ void AC97Play()
 	Out16(nam_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
 }
 
-void FillBDL()
+void FillInBDL()
 {
-	bdl_ptr[curr_entry] = (struct BDL_Entry) { 
-		.addr = (u32)demo_audio,
+	bdl_in[0] = (struct BDL_Entry) { 
+		.addr = (u32)audio_in,
+		.num_of_samples = BUFFER_SIZE,
+		.reserved = 0,
+		.last_buffer_entry = 1,
+		.int_on_completion = 1
+	};
+}
+
+void FillOutBDL()
+{
+	bdl_out[curr_entry] = (struct BDL_Entry) { 
+		.addr = (u32)audio_out,
 		.num_of_samples = BUFFER_SIZE,
 		.reserved = 0,
 		.last_buffer_entry = 1,
