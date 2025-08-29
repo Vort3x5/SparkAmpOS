@@ -33,6 +33,8 @@
 
 #define NUM_OF_BDL_ENTRIES 32
 
+#define BUFFER_SIZE 64
+
 struct BDL_Entry
 {
 	u32 addr;
@@ -62,3 +64,6 @@ void AC97Play();
 
 void FillInBDL();
 void FillOutBDL();
+
+void AC97StartAmp();
+void AmpLoop();

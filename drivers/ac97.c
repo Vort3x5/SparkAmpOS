@@ -1,6 +1,7 @@
 #define AC97_DEF
 #include <ac97.h>
 
+#include <stdtypes.h>
 #include <video.h>
 #include <utils.h>
 #include <math.h>
@@ -112,4 +113,58 @@ void FillOutBDL()
 		.int_on_completion = 1
 	};
 	curr_entry = (curr_entry + 1) & (NUM_OF_BDL_ENTRIES - 1);
+}
+
+void AC97StartAmp()
+{
+	Out16(nam_base + MIXER_PCM_OUT_VOL, 0x808);
+	Out16(nam_base + MIXER_MASTER_OUT_VOL, 0x808);
+
+	FillInBDL();
+	FillOutBDL();
+
+	Out8(nabm_base + BUS_REG_RESET, 0x02);
+	while ((In8(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
+		asm("nop");
+
+	Out32(nabm_base + BUS_PCM_OUT_BOX + BUS_ADDR_OF_BDL, (u32)bdl_out);
+	Out8(nabm_base + BUS_PCM_OUT_BOX + BUS_NUM_OF_BD_ENTRIES, 1);
+
+	Out32(nabm_base + BUS_PCM_IN_BOX + BUS_ADDR_OF_BDL, (u32)bdl_in);
+	Out8(nabm_base + BUS_PCM_IN_BOX + BUS_NUM_OF_BD_ENTRIES, 1);
+
+	Out8(nabm_base + BUS_REG_RESET, 0x01);
+
+	Out16(nam_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
+	Out16(nam_base + BUS_PCM_IN_BOX + BUS_TRANSFER_CTRL, 0x15);
+
+	Print("Amp ready to loop!\n", GREEN);
+}
+
+void AmpLoop()
+{
+	while (true)
+	{
+		u8 input_status = In8(nabm_base + BUS_PCM_IN_BOX + BUS_STS_OF_DATA_TRANSFER);
+		if (input_status & 0x04)
+		{
+			for (u32 i = 0; i < BUFFER_SIZE; ++i)
+			{
+				s32 amplified = audio_in[i] * 16;
+
+				if (amplified > 32767)
+					amplified = 32767;
+				if (amplified < -32768)
+					amplified = -32768;
+
+				audio_out[i] = (s16)amplified;
+			}
+
+			Out8(nabm_base + BUS_PCM_IN_BOX + BUS_STS_OF_DATA_TRANSFER, 0x04);
+			Out8(nabm_base + BUS_PCM_OUT_BOX + BUS_STS_OF_DATA_TRANSFER, 0x04);
+
+			FillInBDL();
+			FillOutBDL();
+		}
+	}
 }

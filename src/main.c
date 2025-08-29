@@ -32,8 +32,9 @@ void Main()
 	PrintSepration();
 
 	_FPUInit();
-	GenerateSineWave();
-	AC97Play();
+
+	AC97StartAmp();
+	AmpLoop();
 
 	Print("Finish!", BLUE);
 	_Halt();
