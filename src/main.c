@@ -31,8 +31,6 @@ void Main()
 	Print("AC97 Sound Card Initialized\n", GREEN);
 	PrintSepration();
 
-	_FPUInit();
-
 	AC97StartAmp();
 	AmpLoop();
 

@@ -15,7 +15,7 @@ void InitDMem()
 	next_alloc_base = AlignUp(kernel_end_addr + 0x1000, 4096);
 } 
 
-u8 *Malloc(u64 size )
+u8 *Malloc(u64 size)
 {
 	size = AlignUp(size, 64);
 
@@ -44,12 +44,23 @@ u8 *Malloc(u64 size )
 	FAILED("ERROR: No more memory avaliable to allocate");
 }
 
+Arena_Region *NewArenaRegion(Arena *arena, u64 size)
+{
+	u64 total_size = sizeof(Arena_Region) + size;
+
+	Arena_Region *region = (Arena_Region *)Malloc(total_size);;
+	region->next = NULL;
+	region->size = size;
+	region->used = 0;
+	MemSet(region->data, 0, size);
+
+	return region;
+}
+
 void *ArenaAlloc(Arena *arena, u64 size, u64 alignment)
 {
 	if (size == 0)
 		return NULL;
-
-	size = AlignUp(size, alignment);
 
 	if (!arena->end || arena->end->used + size > arena->end->size)
 	{
@@ -78,17 +89,38 @@ void *ArenaAlloc(Arena *arena, u64 size, u64 alignment)
 	return result;
 }
 
-Arena_Region *NewArenaRegion(Arena *arena, u64 size)
+void *ArenaRealloc(Arena *arena, void *prev_ptr, u64 prev_size, u64 new_size, u64 alignment)
 {
-	u64 total_size = sizeof(Arena_Region) + size;
+	if (prev_ptr == NULL)
+		return ArenaAlloc(arena, new_size, alignment);
+	if (new_size == 0)
+		return NULL;
 
-	Arena_Region *region = (Arena_Region *)Malloc(total_size);;
-	region->next = NULL;
-	region->size = size;
-	region->used = 0;
-	Memset(region->data, 0, size);
+	u8 *region_end = arena->end->data + arena->end->used;
+	u8 *expected_end = (u8 *)prev_ptr + prev_size;
 
-	return region;
+	if (expected_end == region_end)
+	{
+		if (new_size <= prev_size)
+		{
+			arena->end->used -= (prev_size - new_size);
+			return prev_ptr;
+		}
+		else
+		{
+			u64 add_bytes = new_size - prev_size;
+			if (arena->end->used + add_bytes <= arena->end->size)
+			{
+				arena->end->used += add_bytes;
+				return prev_ptr;
+			}
+		}
+	}
+
+	void *new_ptr = ArenaAlloc(arena, new_size, alignment);
+	u64 copy_size = (prev_size < new_size) ? prev_size : new_size;
+	MemCpy(prev_ptr, new_ptr, copy_size);
+	return new_ptr;
 }
 
 void Free(Arena *arena)
@@ -128,11 +160,18 @@ void ArenaRewind(Arena *arena, Arena_Mark mark)
 	arena->end = mark.region;
 }
 
-void Memset(void *src, s32 value, s32 size)
+void MemSet(void *src, s32 value, u64 size)
 {
 	u8 *ptr = src;
-	for (s32 i = 0; i < size; ++i)
+	for (u64 i = 0; i < size; ++i)
 		ptr[i] = value;
+}
+
+void MemCpy(void *src, void *dest, u64 size)
+{
+	u8 *from = src, *to = dest;
+	for (u64 i = 0; i < size; ++i)
+		to[i] = from[i];
 }
 
 void MemDump()
@@ -142,7 +181,7 @@ void MemDump()
 	PutC('\n', WHITE);
 	Print("(Base | Len | Type): ", WHITE);
 	PutC('\n', WHITE);
-	for (s32 i = 0; i < mmap_count; ++i)
+	for (u32 i = 0; i < mmap_count; ++i)
 	{
 		PrintNum(mmap[i].base, LIGHT_CYAN);
 		Print(" | ", WHITE);

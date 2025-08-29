@@ -12,6 +12,17 @@
 #define ALLOC_ARRAY(arena, type, count) \
     ((type *)ArenaAlloc((arena), sizeof(type) * (count), _Alignof(type)))
 
+#define REALLOC(arena, old_ptr, type, old_size, new_size) \
+    ((type *))ArenaRealloc((arena), (old_ptr), (old_size), (new_size), _Alignof(type))
+
+#define REALLOC_ARRAY(arena, old_ptr, type, old_count, new_count) \
+    ((type *))ArenaRealloc((arena), (old_ptr), \
+						  sizeof(type) * (old_count), \
+                          sizeof(type) * (new_count), \
+						   _Alignof(type))
+
+#define ARRAY_PUSH(arena, array, item)
+
 struct MemMapEntry
 {
 	u64 base, len;
@@ -40,6 +51,12 @@ struct Arena_Mark
 	u64 used;
 };
 
+typedef struct{
+	u8 *data;
+	u32 count;
+	u64 size;
+} Array;
+
 #ifdef MEM_DEF
 
 static u32 mmap_count;
@@ -60,12 +77,14 @@ static inline u64 AlignUp(u64 value, u64 alignment)
 void InitDMem();
 u8 *Malloc(u64 size);
 
-void *ArenaAlloc(Arena *arena, u64 size, u64 alignment);
 Arena_Region *NewArenaRegion(Arena *arena, u64 size);
+void *ArenaAlloc(Arena *arena, u64 size, u64 alignment);
+void *ArenaRealloc(Arena *arena, void *prev_ptr, u64 prev_size, u64 new_size, u64 alignment);
 void Free(Arena *arena);
 
 Arena_Mark ArenaSnapshot(Arena *arena);
 void ArenaRewind(Arena *arena, Arena_Mark mark);
 
-void Memset(void *src, s32 value, s32 size);
+void MemSet(void *src, s32 value, u64 size);
+void MemCpy(void *src, void *dest, u64 size);
 void MemDump();

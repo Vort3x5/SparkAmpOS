@@ -31,7 +31,7 @@ rb (idt_entry_size * 256)
 idt_ptr IDT_Ptr 
 rb idt_ptr_size
 
-extrn Memset
+extrn MemSet
 public _IDTLoad
 _IDTLoad:
 	mov [idt_ptr + IDT_Ptr.limit], (idt_entry_size * 256) - 1
@@ -40,7 +40,7 @@ _IDTLoad:
 	push (idt_entry_size * 256) - 1
 	push 0
 	push idt
-	call Memset
+	call MemSet
 	add esp, 0x10
 
 	lidt [idt_ptr]
