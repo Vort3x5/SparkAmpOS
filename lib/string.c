@@ -34,56 +34,16 @@ u64 StrLen(const char *str)
 	return len;
 }
 
-String FormatToString(const char *str, void *arg)
-{
-	if (str[0] != '%')
-		FAILED("ERROR: Nothing to format");
-
-	u64 num = 0;
-	switch (str[1])
-	{
-		case 'b':
-			num = (u64)arg;
-		    return NumToStr(num, 2);
-
-		case 'd':
-			num = (u64)arg;
-		    return NumToStr(num, 10);
-
-		case 'x':
-			num = (u64)arg;
-		    return NumToStr(num, 16);
-
-		case '%':
-			return StringFrom("%");
-			break;
-
-		case 'c':
-		case 's':
-			return StringFrom((const char *)arg);
-		    break;
-
-		default:
-			FAILED("ERROR: Wrong format specifier!");
-		    break;
-	}
-}
-
 String NumToStr(u64 num, u8 sys)
 {
-	if (sys > 16)
+	if (sys > 16 || sys < 2)
 		FAILED("ERROR: Number system not supported!");
 
-	char nums_as_chars[16] = {'0', '1', '2', '3', '4', '5', 
-		'6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	u8 digits = 0;
 	for (u64 i = num; i; i /= sys)
 		++digits;
 
-	String str = (String) {
-		.data = ALLOC_ARRAY(&g_frame_buffer, char, digits + 1),
-	    .len = digits + 1,
-	};
+	String str = StringNew(digits + 1);
 	for (u32 i = digits; num; num /= sys, --i)
 		str.data[i] = nums_as_chars[num % sys];
 	return str;

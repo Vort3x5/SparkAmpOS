@@ -35,10 +35,74 @@ void PutC(char c, enum Colors color)
 	}
 }
 
-void Print(const char *msg, enum Colors color)
+void Print(enum Colors color, const char *msg, ...)
 {
-	for (s32 i = 0; msg[i]; ++i)
-		PutC(msg[i], color);
+	va_list args;
+	va_start(args, msg);
+
+	for (const char *c = msg; *c; ++c)
+	{
+		if (*c != '%')
+		{
+			PutC(*c, color);
+			continue;
+		}
+
+		++c;
+		switch (*c)
+		{
+			case 'i':
+			case 'd':
+			    s64 num = va_arg(args, s64);
+				if (num < 0)
+				{
+					PutC('-', color);
+					num = -num;
+				}
+			    PrintStr(NumToStr(num, 10).data, color);
+				break;
+
+			case 'u':
+			    u64 num = va_arg(args, u64);
+			    PrintStr(NumToStr(num, 10).data, color);
+				break;
+
+			case 'x':
+			    u64 num = va_arg(args, u64);
+			    PrintStr(NumToStr(num, 16).data, color);
+				break;
+
+			case 'b':
+			    u64 num = va_arg(args, u64);
+			    PrintStr(NumToStr(num, 2).data, color);
+				break;
+
+			case 'c':
+				PutC((char)va_arg(args, char), color);
+				break;
+
+			case 's':
+				PrintStr(va_arg(args, char *), color);
+				break;
+
+			case '%':
+				PutC('%', color);
+				break;
+
+			default:
+				PutC('%', color);
+				PutC(*c, color);
+				break;
+		}
+	}
+
+	va_end(args);
+}
+
+void PrintStr(const char *str, enum Colors color)
+{
+	for (s32 i = 0; str[i]; ++i)
+		PutC(str[i], color);
 }
 
 void PrintNum(u64 num, enum Colors color)

@@ -26,10 +26,13 @@ typedef __builtin_va_list va_list;
 #define va_end(ap) __builtin_va_end(ap)
 #define va_arg(ap, type) __builtin_va_arg(ap, type)
 
+#ifdef STR_DEF
+static char nums_as_chars[16] = {'0', '1', '2', '3', '4', '5', 
+		'6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+#endif
+
 String StringNew(u64 len);
 String StringFrom(const char *c_str);
 
 u64 StrLen(const char *str);
-String FormatToString(const char *str, void *arg);
 String NumToStr(u64 num, u8 sys);
-String DecToHex(u64 num);

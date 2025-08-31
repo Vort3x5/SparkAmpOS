@@ -15,13 +15,13 @@ void Main()
 
 	TTYReset();
 	Clear();
-	Print("Start!\n", BLUE);
+	Print(BLUE, "Start!\n");
 
 	IDTInstall();
 	ISRsInstall();
 	IRQsInstall();
 	__asm__("sti");
-	Print("Interrupts Installed\n", GREEN);
+	Print(GREEN, "Interrupts Installed\n");
 
 	ScanPCI();
 	PrintSepration();
@@ -31,12 +31,12 @@ void Main()
 	GenerateSineWave();
 	AC97Play();
 
-	Print("AC97 Sound Card Initialized\n", GREEN);
+	Print(GREEN, "AC97 Sound Card Initialized\n");
 	PrintSepration();
 
 	AC97StartAmp();
 	AmpLoop();
 
-	Print("Finish!", BLUE);
+	Print(BLUE, "Finish!");
 	_Halt();
 }
