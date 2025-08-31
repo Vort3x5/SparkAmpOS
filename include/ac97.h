@@ -33,7 +33,7 @@
 
 #define NUM_OF_BDL_ENTRIES 32
 
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 4096
 
 struct BDL_Entry
 {

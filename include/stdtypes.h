@@ -30,5 +30,6 @@ String StringNew(u64 len);
 String StringFrom(const char *c_str);
 
 u64 StrLen(const char *str);
-String FormatToString(const char *str);
-String NumToStr(u64 num);
+String FormatToString(const char *str, void *arg);
+String NumToStr(u64 num, u8 num_sys);
+String DecToHex(u64 num);

@@ -77,7 +77,14 @@ void AC97Play()
 	Out16(nam_base + MIXER_PCM_OUT_VOL, 0x808);
 	Out16(nam_base + MIXER_MASTER_OUT_VOL, 0x808);
 
-	FillOutBDL();
+	bdl_out[curr_entry] = (struct BDL_Entry) { 
+		.addr = (u32)demo_audio,
+		.num_of_samples = 4096,
+		.reserved = 0,
+		.last_buffer_entry = 1,
+		.int_on_completion = 1
+	};
+	curr_entry = (curr_entry + 1) & (NUM_OF_BDL_ENTRIES - 1);
 
 	Out8(nabm_base + BUS_REG_RESET, 0x02);
 	while((In8(nabm_base + BUS_REG_RESET) & 0x2) == 0x2)
@@ -135,8 +142,8 @@ void AC97StartAmp()
 
 	Out8(nabm_base + BUS_REG_RESET, 0x01);
 
-	Out16(nam_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
-	Out16(nam_base + BUS_PCM_IN_BOX + BUS_TRANSFER_CTRL, 0x15);
+	Out8(nabm_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
+	Out8(nabm_base + BUS_PCM_IN_BOX + BUS_TRANSFER_CTRL, 0x15);
 
 	Print("Amp ready to loop!\n", GREEN);
 }
