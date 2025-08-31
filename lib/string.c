@@ -69,17 +69,22 @@ String FormatToString(const char *str, void *arg)
 	}
 }
 
-String NumToStr(u64 num, u8 num_sys)
+String NumToStr(u64 num, u8 sys)
 {
+	if (sys > 16)
+		FAILED("ERROR: Number system not supported!");
+
+	char nums_as_chars[16] = {'0', '1', '2', '3', '4', '5', 
+		'6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	u8 digits = 0;
-	for (u64 i = num; i; i /= num_sys)
+	for (u64 i = num; i; i /= sys)
 		++digits;
 
 	String str = (String) {
 		.data = ALLOC_ARRAY(&g_frame_buffer, char, digits + 1),
 	    .len = digits + 1,
 	};
-	for (u32 i = digits; num; num /= num_sys, --i)
-		str.data[i] = num % num_sys;
+	for (u32 i = digits; num; num /= sys, --i)
+		str.data[i] = nums_as_chars[num % sys];
 	return str;
 }
