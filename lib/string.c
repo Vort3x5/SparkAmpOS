@@ -55,12 +55,12 @@ String FormatToString(const char *str, void *arg)
 		    return NumToStr(num, 16);
 
 		case '%':
+			return StringFrom("%");
 			break;
 
 		case 'c':
-		    break;
-
 		case 's':
+			return StringFrom((const char *)arg);
 		    break;
 
 		default:
