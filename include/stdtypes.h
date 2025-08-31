@@ -30,3 +30,5 @@ String StringNew(u64 len);
 String StringFrom(const char *c_str);
 
 u64 StrLen(const char *str);
+String FormatToString(const char *str);
+String NumToStr(u64 num);

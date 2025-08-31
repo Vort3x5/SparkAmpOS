@@ -60,7 +60,7 @@ Arena_Region *NewArenaRegion(Arena *arena, u64 size)
 void *ArenaAlloc(Arena *arena, u64 size, u64 alignment)
 {
 	if (size == 0)
-		return NULL;
+		FAILED("ERROR: Nothing to allocate!");
 
 	if (!arena->end || arena->end->used + size > arena->end->size)
 	{
@@ -93,6 +93,7 @@ void *ArenaRealloc(Arena *arena, void *prev_ptr, u64 prev_size, u64 new_size, u6
 {
 	if (prev_ptr == NULL)
 		return ArenaAlloc(arena, new_size, alignment);
+
 	if (new_size == 0)
 		return NULL;
 

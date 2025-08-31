@@ -1,6 +1,7 @@
 #define STR_DEF
 #include <stdtypes.h>
 
+#include <utils.h>
 #include <memory.h>
 
 String StringFrom(const char *c_str)
@@ -31,4 +32,34 @@ u64 StrLen(const char *str)
 		++len;
 
 	return len;
+}
+
+String FormatToString(const char *str)
+{
+	if (str[0] != '%')
+		FAILED("ERROR: Nothing to format");
+
+	switch (str[1])
+	{
+		case 'd':
+		    break;
+
+		case 'x':
+		    break;
+
+		case '%':
+		case 'c':
+		    break;
+
+		case 's':
+		    break;
+
+		default:
+			FAILED("ERROR: Wrong format specifier!");
+		    break;
+	}
+}
+
+String NumToStr(u64 num)
+{
 }
