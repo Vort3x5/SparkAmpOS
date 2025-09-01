@@ -3,7 +3,8 @@ CC := gcc
 LD := ld
 CFLAGS := -m32 -O0 -std=gnu99 -nostdlib -ffreestanding -fno-pie -fno-stack-protector \
           -I include/ -Wno-shift-count-overflow -Wno-int-to-pointer-cast \
-		  -fno-builtin -fno-asynchronous-unwind-tables -g3
+		  -fno-builtin -fno-asynchronous-unwind-tables -g3 \
+		  -mno-red-zone -mno-mmx -mno-sse -mno-sse2
 
 C_SRCS := $(wildcard src/*.c drivers/*.c lib/*.c)
 ASM_SRCS := $(wildcard init/*.asm)

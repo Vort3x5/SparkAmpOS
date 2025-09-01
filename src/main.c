@@ -15,7 +15,7 @@ void Main()
 
 	TTYReset();
 	Clear();
-	Print(BLUE, "%d Start!\n", 5);
+	Print(BLUE, "Stage %d: Start!\n", (u64)1);
 
 	IDTInstall();
 	ISRsInstall();
