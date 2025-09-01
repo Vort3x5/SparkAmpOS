@@ -28,7 +28,7 @@ bool PCIIsAC97(u32 bus, u32 dev, u32 function)
 
 void PCIAC97Found(u32 bus, u32 dev, u32 function)
 {
-	Print("AC97 Found!\n", GREEN);
+	Print(GREEN, "AC97 Found!\n");
 	nam_base = PCIReadMMIOBar(bus, dev, function, PCI_BAR0);
 	nabm_base = PCIReadMMIOBar(bus, dev, function, PCI_BAR1);
 	PCIEnableMMIOBusMastering(bus, dev, function);
@@ -41,21 +41,12 @@ void AC97Init()
 
 	channel_capabilities = 
 		(In32(nabm_base + BUS_REG_GSTS) >> 20) & 0x03;
-	Print("Channel capabilities bits: ", WHITE);
-	PrintNum(channel_capabilities, LIGHT_CYAN);
-	PutC('\n', WHITE);
 
 	sample_capabilities = 
 		(In32(nabm_base + BUS_REG_GSTS) >> 22) & 0x03;
-	Print("Sample capabilities bits: ", WHITE);
-	PrintNum(sample_capabilities, LIGHT_CYAN);
-	PutC('\n', WHITE);
 
 	ext_capabilities = (In16(nam_base + MIXER_EXT_CAPABILITIES) & 0x08)
 		&& (In16(nam_base + MIXER_AUX_OUT_VOL) == 0x8000);
-	Print("Headphone output boolean value: ", WHITE);
-	PrintNum(ext_capabilities, LIGHT_CYAN);
-	PutC('\n', WHITE);
 
 	bdl_in = 
 		(struct BDL_Entry *)ArenaAlloc(&g_noreset_buffer, (sizeof (struct BDL_Entry)) * 32, 16);
@@ -145,7 +136,7 @@ void AC97StartAmp()
 	Out8(nabm_base + BUS_PCM_OUT_BOX + BUS_TRANSFER_CTRL, 0x15);
 	Out8(nabm_base + BUS_PCM_IN_BOX + BUS_TRANSFER_CTRL, 0x15);
 
-	Print("Amp ready to loop!\n", GREEN);
+	Print(GREEN, "Amp ready to loop!\n");
 }
 
 void AmpLoop()

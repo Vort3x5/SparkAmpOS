@@ -47,8 +47,6 @@ static inline u16 VgaEntry(u8 c, enum Colors color)
 void TTYReset();
 void Clear();
 void PutC(char c, enum Colors color);
-void Print(enum Colors color, const char *msg, ...)
+void Print(enum Colors color, const char *msg, ...);
 void PrintStr(const char *msg, enum Colors color);
-void PrintNum(u64 num, enum Colors color);
 void PrintSepration();
-void PrintIter(u64 num, enum Colors color);

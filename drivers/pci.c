@@ -1,6 +1,7 @@
 #include <pci.h>
-
+ 
 #include <stdtypes.h>
+#include <utils.h>
 #include <io.h>
 #include <video.h>
 #include <interrupts.h>
@@ -33,8 +34,7 @@ void ScanPCI()
 			}
 		}
 	}
-	Print("Fatal: AC97 not found", RED);
-	_Halt();
+	FAILED("AC97 not found");
 }
 
 void WritePCI(u32 bus, u32 dev, u32 function, u32 offset, u32 val)

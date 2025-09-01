@@ -78,11 +78,8 @@ char *exceptions[] =
 void FaultHandler(s32 int_num)
 {
 	if (int_num < 32)
-	{
-		Print(exceptions[int_num], RED);
-		Print(" Exception. System Halted!\n", RED);
-	}
+		Print(RED, "%s Exception. System Halted!\n", exceptions[int_num]);
 	else
-		Print("Exception Out Of ISR Range. System Halted!\n", RED);
+		Print(RED, "Exception Out Of ISR Range. System Halted!\n");
 	_Halt();
 }

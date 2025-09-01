@@ -177,18 +177,4 @@ void MemCpy(void *src, void *dest, u64 size)
 
 void MemDump()
 {
-	Print("Num of entries: ", WHITE);
-	PrintNum(mmap_count, LIGHT_CYAN);
-	PutC('\n', WHITE);
-	Print("(Base | Len | Type): ", WHITE);
-	PutC('\n', WHITE);
-	for (u32 i = 0; i < mmap_count; ++i)
-	{
-		PrintNum(mmap[i].base, LIGHT_CYAN);
-		Print(" | ", WHITE);
-		PrintNum(mmap[i].len, LIGHT_CYAN);
-		Print(" | ", WHITE);
-		PrintNum(mmap[i].type, LIGHT_CYAN);
-		PutC('\n', WHITE);
-	}
 }

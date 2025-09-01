@@ -21,7 +21,7 @@ bool PCIIsHDA(u32 bus, u32 dev, u32 function)
 
 void PCIHDAFound(u32 bus, u32 dev, u32 function)
 {
-	Print("HDA Found!\n", GREEN);
+	Print(GREEN, "HDA Found!\n");
 	if(hda_sc_ptr >= 10)
 		return;
 	hda_sc[hda_sc_ptr].present = true;
@@ -40,7 +40,7 @@ void HDAInit()
 
 	PrintSepration();
 	MMOut16(hda_base + HDA_REG_INTCNTL, 0);
-	Print("HDA Interrupts Disabled\n", GREEN);
+	Print(GREEN, "HDA Interrupts Disabled\n");
 
 	HDAIdentifyCodecs();
 }
@@ -73,28 +73,19 @@ void CORBInit()
 		corb_entries = 2, corb_entries_info = 0;
 	else
 	{
-		Print("ERROR: CORB Not Supported\n", RED);
 		_Halt();
 	}
-	Print("CORB Entries Number: ", WHITE);
-	PrintNum(corb_entries, LIGHT_CYAN);
-	PutC('\n', WHITE);
 	MMOut8(hda_base + HDA_REG_CORBSIZE, corb_entries_info);
 
 	MMOut16(hda_base + HDA_REG_CORBRP, 0x8000);
 	while ((MMIn16(hda_base + HDA_REG_CORBRP) & 0x8000) != 0x8000);
 	MMOut16(hda_base + HDA_REG_CORBRP, 0);
 	while ((MMIn16(hda_base + HDA_REG_CORBRP) & 0x8000) != 0);
-	Print("CORB Read Pointer Reset Success!\n", GREEN);
 
 	MMOut16(hda_base + HDA_REG_CORBWP, 0);
 	corb_ptr = 1;
-	Print("CORB Write Pointer Reset Success!\n", GREEN);
 
 	MMOut8(hda_base + HDA_REG_CORBCTL, 0x2);
-	Print("CORB base address: ", WHITE);
-	PrintNum(corb_base, LIGHT_CYAN);
-	PutC('\n', WHITE);
 }
 
 void RIRBInit()
@@ -114,41 +105,20 @@ void RIRBInit()
 		rirb_entries = 2, rirb_entries_info = 0;
 	else
 	{
-		Print("ERROR: RIRB Not Supported\n", RED);
 		_Halt();
 	}
-	Print("RIRB Entries Number: ", WHITE);
-	PrintNum(rirb_entries, LIGHT_CYAN);
-	PutC('\n', WHITE);
 	MMOut8(hda_base + HDA_REG_RIRBSIZE, rirb_entries_info);
 
 	MMOut16(hda_base + HDA_REG_RIRBWP, 0x8000);
 	rirb_ptr = 1;
-	Print("RIRB Write Pointer Reset Success!\n", GREEN);
 
 	MMOut8(hda_base + HDA_REG_RIRBCTL, 0x2);
-	Print("RIRB base address: ", WHITE);
-	PrintNum(rirb_base, LIGHT_CYAN);
-	PutC('\n', WHITE);
 }
 
 void HDAIdentifyCodecs()
 {
 	MMOut32(hda_base + HDA_REG_WAKEEN, HDA_REG_WAKEEN_ENABLE);
 	u16 statests = MMIn16(hda_base + HDA_REG_STATESTS);
-
-	Print("statests register value (number of avaliable codecs): ", WHITE);
-	PrintNum(statests, LIGHT_CYAN);
-	PutC('\n', WHITE);
-
-	for (s32 i = 0; i < 15; ++i)
-	{
-		if (statests & (1 << i))
-		{
-			PrintNum(i, LIGHT_CYAN);
-			PutC('\n', WHITE);
-		}
-	}
 }
 
 u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
@@ -156,10 +126,6 @@ u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
 	u32 msg = ((codec << 28) | (node << 20) | (verb << 8) | (cmd));
 	u32 *corb_mem = (u32 *)corb_base;
 
-	PrintNum(corb_base, LIGHT_CYAN);
-	PutC('\n', WHITE);
-	PrintNum((u32)&(corb_mem[corb_ptr]), LIGHT_CYAN);
-	PutC('\n', WHITE);
 	corb_mem[corb_ptr] = msg;
 	MMOut16(hda_base + HDA_REG_CORBWP, corb_ptr);
 
@@ -169,7 +135,6 @@ u64 HDACmdResponse(u32 codec, u32 node, u32 verb, u32 cmd)
 
 	if (MMIn16(hda_base + HDA_REG_RIRBWP) != corb_ptr)
 	{
-		Print("ERROR: No Response\n", RED);
 		_Halt();
 	}
 	return 0;

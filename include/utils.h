@@ -4,12 +4,12 @@
 #include <interrupts.h>
 
 #define BRK() do { \
-    Print("Breakpoint!", YELLOW); \
+    Print(YELLOW, "Breakpoint!"); \
     _Halt(); \
 } while (0)
 
 #define FAILED(msg) do { \
-    Print(msg, RED); \
+    Print(RED, "ERROR: %s", msg); \
     _Halt(); \
 } while (0)
 

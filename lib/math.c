@@ -29,7 +29,6 @@ f64 Sin(f64 x)
 void GenerateSineWave()
 {
 	demo_audio = ALLOC_ARRAY(&g_noreset_buffer, s16, 4096);
-	PrintNum((u64)demo_audio, LIGHT_CYAN);
 	PutC('\n', WHITE);
 	for (u32 i = 0; i < 4096; ++i)
 	{
