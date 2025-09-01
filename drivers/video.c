@@ -49,6 +49,9 @@ void Print(enum Colors color, const char *msg, ...)
 		}
 
 		++c;
+		if (*c == NULL)
+			break;
+
 		s64 snum;
 		u64 num;
 		switch (*c)
@@ -56,7 +59,7 @@ void Print(enum Colors color, const char *msg, ...)
 			case 'i':
 			case 'd':
 			    snum = va_arg(args, s64);
-				if (num < 0)
+				if (snum < 0)
 				{
 					PutC('-', color);
 					snum = -snum;
@@ -80,11 +83,15 @@ void Print(enum Colors color, const char *msg, ...)
 				break;
 
 			case 'c':
-				PutC((char)va_arg(args, char), color);
+				PutC((char)va_arg(args, int), color);
 				break;
 
 			case 's':
-				PrintStr(va_arg(args, char *), color);
+				char *str = va_arg(args, char *);
+				if (str)
+					PrintStr(str, color);
+				else
+					PrintStr("(null)", color);
 				break;
 
 			case '%':
