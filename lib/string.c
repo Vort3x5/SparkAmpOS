@@ -36,15 +36,15 @@ u64 StrLen(const char *str)
 
 String NumToStr(u64 num, u8 sys)
 {
-	if (sys > 16 || sys < 2)
-		FAILED("ERROR: Number system not supported!");
+	if (sys < 2 || sys > 16)
+		FAILED("Number system not supported!");
 
 	u8 digits = 0;
 	for (u64 i = num; i; i /= sys)
 		++digits;
 
-	String str = StringNew(digits + 1);
-	for (u32 i = digits; num; num /= sys, --i)
+	String str = StringNew(digits);
+	for (u32 i = digits - 1; num; num /= sys, --i)
 		str.data[i] = nums_as_chars[num % sys];
 	return str;
 }

@@ -15,7 +15,7 @@ void Main()
 
 	TTYReset();
 	Clear();
-	Print(BLUE, "%d Start!\n", 5, 3, 6);
+	Print(BLUE, "%d Start!\n", 5);
 
 	IDTInstall();
 	ISRsInstall();
