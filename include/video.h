@@ -35,6 +35,12 @@ typedef struct {
 	u32 addr;
 } TTY;
 
+typedef struct {
+	bool t_long, t_long_long, 
+	    uppercase, zero_pad, left_align;
+	int width, precision;
+} FormatSpecifier;
+
 #ifdef TTY_DEF
 
 static TTY tty;
@@ -47,6 +53,7 @@ static inline u16 VgaEntry(u8 c, enum Colors color)
 void TTYReset();
 void Clear();
 void PutC(char c, enum Colors color);
-void Print(enum Colors color, const char *msg, ...);
 void PrintStr(const char *msg, enum Colors color);
+FormatSpecifier ParseFormatSpec(const char **format_ptr);
+void Print(enum Colors color, const char *msg, ...);
 void PrintSepration();

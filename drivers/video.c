@@ -35,6 +35,51 @@ void PutC(char c, enum Colors color)
 	}
 }
 
+void PrintStr(const char *str, enum Colors color)
+{
+	for (s32 i = 0; str[i]; ++i)
+		PutC(str[i], color);
+}
+
+FormatSpecifier ParseFormatSpec(const char **format_ptr)
+{
+	FormatSpecifier specifier = {0};
+	const char *c = *format_ptr;
+
+	while (*c)
+	{
+		if (*c == '-')
+		{
+			specifier.left_align = true; 
+			++c;
+		}
+		else if (*c == '0')
+		{
+			specifier.left_align = true; 
+			++c;
+		}
+		else
+			break;
+	}
+
+	for (; *c >= '0' && *c <= '9'; ++c)
+		specifier.width = specifier.width * 10 + (*c - '0');
+
+	if (*c == 'l')
+	{
+		specifier.t_long = true;
+		++c;
+		if (*c == 'l')
+		{
+			specifier.t_long_long = true;
+			++c;
+		}
+	}
+
+	*format_ptr = c;
+	return specifier;
+}
+
 void Print(enum Colors color, const char *msg, ...)
 {
 	va_list args;
@@ -106,12 +151,6 @@ void Print(enum Colors color, const char *msg, ...)
 	}
 
 	va_end(args);
-}
-
-void PrintStr(const char *str, enum Colors color)
-{
-	for (s32 i = 0; str[i]; ++i)
-		PutC(str[i], color);
 }
 
 void PrintSepration()

@@ -5,6 +5,10 @@ pkgs.mkShell {
 		gdb
 		fasm
 		gnumake
+
+		jack2
+		qjackctl
+		patchage
     ];
 
 	shellHook = ''
